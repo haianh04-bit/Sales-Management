@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Product Detail</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="row g-0">
+                <!-- Ảnh -->
+                <div class="col-md-4">
+                    <img th:if="${product.imageUrl != null}"
+                         th:src="@{/resources/uploads/products/{url}(url=${product.imageUrl})}"
+                         class="img-fluid rounded-start"
+                         alt="Product Image"
+                         style="object-fit: cover; height: 100%;">
+                </div>
+
+                <!-- Thông tin -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h3 class="card-title" th:text="${product.name}">Tên sản phẩm</h3>
+                        <p class="fw-bold text-primary fs-5" th:text="${product.price + ' $'}">100 $</p>
+                        <p class="card-text" th:text="${product.description}">Mô tả sản phẩm</p>
+                        <p>
+                            <span class="badge bg-secondary">
+                                Số lượng: <span th:text="${product.quantity}">0</span>
+                            </span>
+                        </p>
+
+                        <div class="mt-4 d-flex gap-2">
+                            <a class="btn btn-warning" th:href="@{'/products/edit/' + ${product.id}}">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            <a class="btn btn-danger"
+                               th:href="@{'/products/delete/' + ${product.id}}"
+                               onclick="return confirm('Bạn có chắc muốn xoá sản phẩm này?')">
+                                <i class="bi bi-trash"></i> Xoá
+                            </a>
+                            <a class="btn btn-secondary" th:href="@{/products}">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

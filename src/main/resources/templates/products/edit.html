@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Edit Product</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <h2 class="mb-4"><i class="bi bi-pencil-square"></i> Edit Product</h2>
+
+        <form th:action="@{'/products/edit/' + ${productDTO.id}}"
+              th:object="${productDTO}"
+              method="post"
+              enctype="multipart/form-data"
+              class="row g-3 needs-validation" novalidate>
+
+            <!-- Tên sản phẩm -->
+            <div class="col-md-6">
+                <label class="form-label">Tên sản phẩm</label>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm">
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+
+            <!-- Giá -->
+            <div class="col-md-6">
+                <label class="form-label">Giá</label>
+                <input type="number" th:field="*{price}" class="form-control" placeholder="Nhập giá">
+                <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+            </div>
+
+            <!-- Mô tả -->
+            <div class="col-12">
+                <label class="form-label">Mô tả</label>
+                <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+            </div>
+
+            <!-- Số lượng -->
+            <div class="col-md-6">
+                <label class="form-label">Số lượng</label>
+                <input type="number" th:field="*{quantity}" class="form-control" placeholder="Nhập số lượng">
+                <div class="text-danger" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+            </div>
+
+            <!-- Ảnh -->
+            <div class="col-md-6">
+                <label class="form-label">Ảnh sản phẩm</label>
+                <input type="file" th:field="*{imageFile}" class="form-control">
+                <div class="mt-2">
+                    <img th:if="${productDTO.imageUrl != null}"
+                         th:src="@{/resources/uploads/products/{url}(url=${productDTO.imageUrl})}"
+                         alt="Product Image" class="img-thumbnail" style="max-height: 150px;">
+                </div>
+            </div>
+
+            <!-- Nút -->
+            <div class="col-12 d-flex justify-content-between mt-4">
+                <a class="btn btn-secondary" th:href="@{/products}">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Cập nhật
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>
