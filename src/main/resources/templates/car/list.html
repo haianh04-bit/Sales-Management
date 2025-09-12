@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Danh sách Xe</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Danh sách Xe</h2>
+        <a class="btn btn-success" th:href="@{/cars/create}">
+            <i class="bi bi-plus-circle"></i> Thêm xe
+        </a>
+    </div>
+
+    <!-- Form tìm kiếm -->
+    <form th:action="@{/cars/search}" method="get" class="row g-3 mb-4">
+        <div class="col-md-2">
+            <label class="form-label">Hãng xe</label>
+            <select name="brand" class="form-select">
+                <option value="">-- Tất cả --</option>
+                <option th:each="brand : ${brands}"
+                        th:value="${brand.name}"
+                        th:text="${brand.name}"
+                        th:selected="${brand.name == brandSelected}">
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Model</label>
+            <input type="text" name="model" class="form-control"
+                   th:value="${modelSelected}">
+        </div>
+
+        <div class="col-md-1">
+            <label class="form-label">Đời xe</label>
+            <input type="number" name="year" class="form-control"
+                   th:value="${yearSelected}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Tình trạng</label>
+            <select name="condition" class="form-select">
+                <option value="">-- Tất cả --</option>
+                <option value="mới" th:selected="${conditionSelected=='mới'}">Mới</option>
+                <option value="cũ" th:selected="${conditionSelected=='cũ'}">Cũ</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Hộp số</label>
+            <select name="transmission" class="form-select">
+                <option value="">-- Tất cả --</option>
+                <option value="Tự động" th:selected="${transmissionSelected=='Tự động'}">Tự động</option>
+                <option value="Số sàn" th:selected="${transmissionSelected=='Số sàn'}">Số sàn</option>
+            </select>
+        </div>
+
+        <div class="col-md-1">
+            <label class="form-label">Giá min</label>
+            <input type="number" name="minPrice" class="form-control"
+                   th:value="${minPriceSelected}" step="1000000">
+        </div>
+
+        <div class="col-md-1">
+            <label class="form-label">Giá max</label>
+            <input type="number" name="maxPrice" class="form-control"
+                   th:value="${maxPriceSelected}" step="1000000">
+        </div>
+
+        <div class="col-md-1 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </form>
+
+    <!-- Danh sách xe -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="car : ${cars}">
+            <div class="card h-100 shadow-sm">
+                <a th:href="@{'/cars/view/' + ${car.id}}">
+                    <img th:if="${car.imageUrl}"
+                         th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                         class="card-img-top" alt="Car image"
+                         style="height: 200px; object-fit: cover;">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a th:href="@{'/cars/view/' + ${car.id}}"
+                           th:text="${car.name + ' - ' + car.brand.name}"></a>
+                    </h5>
+                    <p class="card-text">
+                        <strong>Model:</strong> <span th:text="${car.model}"></span><br/>
+                        <strong>Đời xe:</strong> <span th:text="${car.year}"></span><br/>
+                        <strong>Số km:</strong> <span th:text="${car.mileage}"></span><br/>
+                        <strong>Giá:</strong> <span
+                            th:text="${#numbers.formatDecimal(car.price, 0, 'COMMA', 2, 'POINT')}"></span> VND<br/>
+                        <strong>Tình trạng:</strong> <span th:text="${car.condition}"></span><br/>
+                        <strong>Hộp số:</strong> <span th:text="${car.transmission}"></span>
+                    </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a th:href="@{'/cars/edit/' + ${car.id}}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Sửa
+                    </a>
+                    <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Bạn có chắc muốn xoá?');">
+                        <i class="bi bi-trash"></i> Xoá
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<body>
+<section layout:fragment="content">
+    <h2>Thêm Xe Mới</h2>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/cars/create}" th:object="${car}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Tên xe</label>
+            <input type="text" th:field="*{name}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hãng xe</label>
+            <select th:field="*{brandName}" class="form-select">
+                <option value="">-- Chọn hãng --</option>
+                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandName}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Model</label>
+            <input type="text" th:field="*{model}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('model')}" th:errors="*{model}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Đời xe</label>
+            <input type="number" th:field="*{year}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Số km</label>
+            <input type="number" th:field="*{mileage}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('mileage')}" th:errors="*{mileage}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tình trạng</label>
+            <select th:field="*{condition}" class="form-select">
+                <option value="">-- Chọn --</option>
+                <option value="mới">Mới</option>
+                <option value="cũ">Cũ</option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('condition')}" th:errors="*{condition}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Hộp số</label>
+            <select th:field="*{transmission}" class="form-select">
+                <option value="">-- Chọn hộp số --</option>
+                <option value="Tự động">Tự động</option>
+                <option value="Số sàn">Số sàn</option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('transmission')}" th:errors="*{transmission}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Giá</label>
+            <input type="number" th:field="*{price}" class="form-control" step="0.01"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ảnh</label>
+            <input type="file" name="imageFile" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea th:field="*{description}" class="form-control"></textarea>
+            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
+
+        <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Thêm Xe</button>
+        <a th:href="@{/cars}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+    </form>
+</section>
+
+</body>
+</html>

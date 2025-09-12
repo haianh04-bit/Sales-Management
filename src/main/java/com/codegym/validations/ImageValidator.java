@@ -5,11 +5,6 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
 
-<<<<<<< HEAD
-=======
-import java.awt.*;
->>>>>>> login
-
 public class ImageValidator implements ConstraintValidator<Image, MultipartFile> {
     private static final Long MAX_SIZE = 2 * 1024 * 1024L; // 2MB
 
@@ -25,11 +20,8 @@ public class ImageValidator implements ConstraintValidator<Image, MultipartFile>
 
         String lowerCaseFileName = fileName.toLowerCase();
         boolean isImage = lowerCaseFileName.endsWith(".jpg") || lowerCaseFileName.endsWith(".jpeg") ||
-<<<<<<< HEAD
                           lowerCaseFileName.endsWith(".png") || lowerCaseFileName.endsWith(".gif");
-=======
-                lowerCaseFileName.endsWith(".png") || lowerCaseFileName.endsWith(".gif");
->>>>>>> login
+
         boolean isSizeValid = file.getSize() <= MAX_SIZE;
         return isImage && isSizeValid;
     }

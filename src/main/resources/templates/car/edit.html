@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Sửa Xe</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Sửa Xe</h2>
+
+        <!-- Hiển thị lỗi chung -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form th:action="@{'/cars/edit/' + ${car.id}}" th:object="${car}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Tên xe</label>
+                <input type="text" th:field="*{name}" class="form-control"/>
+                <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></div>
+            </div>
+
+            <!-- Hãng xe -->
+            <div class="mb-3">
+                <label class="form-label">Hãng xe</label>
+                <select th:field="*{brandName}" class="form-select">
+                    <option value="">-- Chọn hãng --</option>
+                    <option th:each="brand : ${brands}"
+                            th:value="${brand.name}"
+                            th:text="${brand.name}"
+                            th:selected="${brand.name == car.brandName}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('brandName')}" class="text-danger" th:errors="*{brandName}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Model</label>
+                <input type="text" th:field="*{model}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Đời xe</label>
+                <input type="number" th:field="*{year}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Số km</label>
+                <input type="number" th:field="*{mileage}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tình trạng</label>
+                <select th:field="*{condition}" class="form-select">
+                    <option value="">-- Chọn --</option>
+                    <option value="mới" th:selected="${car.condition == 'mới'}">Mới</option>
+                    <option value="cũ" th:selected="${car.condition == 'cũ'}">Cũ</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hộp số</label>
+                <select th:field="*{transmission}" class="form-select">
+                    <option value="">-- Chọn hộp số --</option>
+                    <option value="Tự động">Tự động</option>
+                    <option value="Số sàn">Số sàn</option>
+                </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('transmission')}" th:errors="*{transmission}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Giá</label>
+                <input type="number" th:field="*{price}" class="form-control" step="0.01"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ảnh</label>
+                <input type="file" name="imageFile" class="form-control"/>
+                <!-- Hiển thị ảnh cũ nếu có -->
+                <div th:if="${car.imageFile}" class="mt-2">
+                    <p>Ảnh hiện tại:</p>
+                    <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageFile        })}" width="200" style="object-fit: cover;"/>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea th:field="*{description}" class="form-control" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Lưu Thay Đổi
+            </button>
+            <a th:href="@{/cars}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+        </form>
+    </div>
+</section>
+</body>
+</html>
