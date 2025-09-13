@@ -5,6 +5,10 @@ import com.codegym.dto.UserDTO;
 import com.codegym.models.User;
 import com.codegym.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -94,10 +98,17 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // Tìm kiếm user (tên, email, phone)
-    public List<User> searchUsers(String keyword) {
+    // Danh sách user có phân trang
+    public Page<User> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return (Page<User>) userRepository.findAll(pageable);
+    }
+
+    // Tìm kiếm user có phân trang
+    public Page<User> searchUsers(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(
-                keyword, keyword, keyword
+                keyword, keyword, keyword, pageable
         );
     }
 }
