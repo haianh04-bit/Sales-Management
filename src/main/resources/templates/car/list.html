@@ -84,22 +84,15 @@
                 <a th:href="@{'/cars/view/' + ${car.id}}">
                     <img th:if="${car.imageUrl}"
                          th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
-                         class="card-img-top" alt="Car image"
-                         style="height: 200px; object-fit: cover;">
+                         class="card-img-top"
+                         style="height: 200px; object-fit: cover;"
+                         alt="Car image">
                 </a>
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <a th:href="@{'/cars/view/' + ${car.id}}"
-                           th:text="${car.name + ' - ' + car.brand.name}"></a>
-                    </h5>
+                    <h5 class="card-title" th:text="${car.name}"></h5>
                     <p class="card-text">
-                        <strong>Model:</strong> <span th:text="${car.model}"></span><br/>
-                        <strong>Đời xe:</strong> <span th:text="${car.year}"></span><br/>
-                        <strong>Số km:</strong> <span th:text="${car.mileage}"></span><br/>
-                        <strong>Giá:</strong> <span
-                            th:text="${#numbers.formatDecimal(car.price, 0, 'COMMA', 2, 'POINT')}"></span> VND<br/>
-                        <strong>Tình trạng:</strong> <span th:text="${car.condition}"></span><br/>
-                        <strong>Hộp số:</strong> <span th:text="${car.transmission}"></span>
+                        <strong>Giá:</strong>
+                        <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
                     </p>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
@@ -109,6 +102,30 @@
                     <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-danger btn-sm"
                        onclick="return confirm('Bạn có chắc muốn xoá?');">
                         <i class="bi bi-trash"></i> Xoá
+                    </a>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <!-- Nút thêm giỏ hàng -->
+                    <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                        <input type="hidden" name="carId" th:value="${car.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
+                        </button>
+                    </form>
+
+                    <!-- Nút mua ngay -->
+                    <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                        <input type="hidden" name="carId" th:value="${car.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-cash"></i> Mua ngay
+                        </button>
+                    </form>
+
+                    <!-- Nút chi tiết -->
+                    <a th:href="@{'/cars/view/' + ${car.id}}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> Chi tiết
                     </a>
                 </div>
             </div>

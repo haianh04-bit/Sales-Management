@@ -21,6 +21,7 @@ public class CarService {
 
     private static final String UPLOAD_DIR = "D:/module4/case-study-module4/src/main/resources/uploads/cars/";
 
+
     private final CarRepository carRepository;
     private final BrandRepository brandRepository;
     private final CarMapper carMapper;
@@ -53,39 +54,34 @@ public class CarService {
     public Car saveCar(CarDTO dto, MultipartFile imageFile) throws IOException {
         Car car = carMapper.toEntity(dto);
 
-        // Set brand
-        if (dto.getBrandName() != null) {
-            Brand brand = brandRepository.findByNameIgnoreCase(dto.getBrandName())
-                    .orElseGet(() -> brandRepository.save(new Brand(null, dto.getBrandName(), null)));
+        if (dto.getBrandId() != null) {
+            Brand brand = brandRepository.findById(dto.getBrandId())
+                    .orElseThrow(() -> new RuntimeException("Brand not found with id=" + dto.getBrandId()));
             car.setBrand(brand);
+        } else {
+            throw new RuntimeException("BrandId is required!");
         }
-
-        // Upload ảnh
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = fileUploadService.uploadFile(UPLOAD_DIR, imageFile);
             car.setImageUrl(fileName);
         }
-
         return carRepository.save(car);
     }
+
 
     // Cập nhật xe từ DTO, giữ nguyên ảnh nếu không upload mới
     public Car updateCar(Long id, CarDTO dto, MultipartFile imageFile) throws IOException {
         Car car = findById(id);
-
-        // Update các trường cơ bản
         carMapper.updateEntity(car, dto);
 
-        // Update brand nếu thay đổi
-        if (dto.getBrandName() != null) {
-            Brand brand = brandRepository.findByNameIgnoreCase(dto.getBrandName())
-                    .orElseGet(() -> brandRepository.save(new Brand(null, dto.getBrandName(), null)));
+        // Cập nhật brand nếu có brandId
+        if (dto.getBrandId() != null) {
+            Brand brand = brandRepository.findById(dto.getBrandId())
+                    .orElseThrow(() -> new RuntimeException("Brand not found with id=" + dto.getBrandId()));
             car.setBrand(brand);
         }
 
-        // Upload ảnh mới nếu có
         if (imageFile != null && !imageFile.isEmpty()) {
-            // Xóa file cũ nếu có
             if (car.getImageUrl() != null) {
                 fileUploadService.deleteFile(UPLOAD_DIR + car.getImageUrl());
             }
@@ -95,6 +91,8 @@ public class CarService {
 
         return carRepository.save(car);
     }
+
+
 
     // Xóa xe
     public void deleteById(Long id) {

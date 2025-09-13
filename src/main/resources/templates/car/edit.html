@@ -78,7 +78,7 @@
                 <!-- Hiển thị ảnh cũ nếu có -->
                 <div th:if="${car.imageFile}" class="mt-2">
                     <p>Ảnh hiện tại:</p>
-                    <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageFile        })}" width="200" style="object-fit: cover;"/>
+                    <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageFile})}" width="200" style="object-fit: cover;"/>
                 </div>
             </div>
 

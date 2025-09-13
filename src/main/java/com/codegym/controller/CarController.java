@@ -33,6 +33,7 @@ public class CarController {
         return "car/list";
     }
 
+
     // Hiển thị form tạo xe mới
     @GetMapping("/create")
     public String showCreateForm(Model model) {
@@ -47,15 +48,18 @@ public class CarController {
                             BindingResult result,
                             @RequestParam("imageFile") MultipartFile imageFile,
                             Model model) {
+
         if (result.hasErrors()) {
+            System.out.println(">>> Validation errors: " + result.getAllErrors());
             model.addAttribute("brands", brandService.findAll());
             return "car/create";
         }
 
         try {
             carService.saveCar(carDTO, imageFile);
-        } catch (IOException e) {
-            model.addAttribute("error", "Lỗi upload file: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Lỗi khi lưu xe: " + e.getMessage());
             model.addAttribute("brands", brandService.findAll());
             return "car/create";
         }

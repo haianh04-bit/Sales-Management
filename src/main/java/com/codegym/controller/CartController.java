@@ -28,14 +28,30 @@ public class CartController {
         return "cart/cart";
     }
 
-    // Thêm xe vào giỏ hàng
+    // Thêm vào giỏ hàng nhưng ở lại trang cũ
     @PostMapping("/add")
     public String addToCart(@RequestParam Long carId,
                             @RequestParam int quantity,
-                            @AuthenticationPrincipal User user) {
+                            @AuthenticationPrincipal User user,
+                            @RequestHeader(value = "Referer", required = false) String referer) {
         cartService.addToCart(user, carId, quantity);
-        return "redirect:/cart";
+
+        // Quay về trang trước (home, list...)
+        if (referer != null) {
+            return "redirect:" + referer;
+        }
+        return "redirect:/cars";
     }
+
+    // Mua ngay → thêm vào giỏ rồi chuyển sang trang giỏ hàng
+    @PostMapping("/buy")
+    public String buyNow(@RequestParam Long carId,
+                         @RequestParam int quantity,
+                         @AuthenticationPrincipal User user) {
+        cartService.addToCart(user, carId, quantity);
+        return "redirect:/cart"; // luôn sang giỏ hàng
+    }
+
 
     // Xóa xe khỏi giỏ hàng
     @PostMapping("/remove")
@@ -47,9 +63,16 @@ public class CartController {
     // Hiển thị trang thanh toán
     @GetMapping("/checkout")
     public String checkoutPage(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("cartItems", cartService.getCart(user));
+        var cartItems = cartService.getCart(user);
+        double total = cartItems.stream()
+                .mapToDouble(i -> i.getCar().getPrice() * i.getQuantity())
+                .sum();
+
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("totalPrice", total);
         return "cart/checkout";
     }
+
 
     // Xử lý thanh toán và tạo đơn hàng
     @PostMapping("/checkout")
@@ -58,4 +81,40 @@ public class CartController {
         redirectAttributes.addFlashAttribute("message", "Order placed successfully! ID: " + order.getId());
         return "redirect:/cart";
     }
+
+    // Thêm nhanh vào giỏ bằng GET (cho link từ home.html)
+    @GetMapping("/add/{carId}")
+    public String addToCartQuick(@PathVariable Long carId,
+                                 @AuthenticationPrincipal User user) {
+        cartService.addToCart(user, carId, 1); // mặc định số lượng = 1
+        return "redirect:/cart";
+    }
+
+    // Mua ngay: thêm vào giỏ rồi đi thẳng tới checkout
+    @GetMapping("/buy/{carId}")
+    public String buyNow(@PathVariable Long carId,
+                         @AuthenticationPrincipal User user) {
+        cartService.addToCart(user, carId, 1);
+        return "redirect:/cart/checkout";
+    }
+
+
+    @PostMapping("/decrease")
+    public String decreaseQuantity(@RequestParam Long cartItemId) {
+        cartService.decreaseQuantity(cartItemId);
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/update")
+    public String updateQuantity(@RequestParam Long cartItemId,
+                                 @RequestParam int quantity,
+                                 @AuthenticationPrincipal User user) {
+        if (quantity > 0) {
+            cartService.updateQuantity(cartItemId, quantity);
+        } else {
+            cartService.removeFromCart(cartItemId);
+        }
+        return "redirect:/cart";
+    }
+
 }

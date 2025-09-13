@@ -1,23 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
     <title>Trang chủ</title>
 </head>
 <body>
-<h1>Xin chào, đây là Home Page</h1>
+<section layout:fragment="content" class="container mt-4">
+    <h2 class="mb-4">🚗 Danh sách xe</h2>
 
-<div th:if="${#authorization.expression('isAuthenticated()')}">
-    <p>Bạn đã đăng nhập với email: <span th:text="${#authentication.name}"></span></p>
-    <a th:href="@{/user/profile}">Xem Profile</a>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Đăng xuất</button>
-    </form>
-</div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="car : ${cars}">
+            <div class="card h-100 shadow-sm">
+                <a th:href="@{'/cars/view/' + ${car.id}}">
+                    <img th:if="${car.imageUrl}"
+                         th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                         class="card-img-top"
+                         style="height: 200px; object-fit: cover;"
+                         alt="Car image">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${car.name}"></h5>
+                    <p class="card-text">
+                        <strong>Giá:</strong>
+                        <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
+                    </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <!-- Nút thêm giỏ hàng -->
+                    <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                        <input type="hidden" name="carId" th:value="${car.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
+                        </button>
+                    </form>
 
-<div th:if="${#authorization.expression('isAnonymous()')}">
-    <a th:href="@{/login}">Đăng nhập</a> |
-    <a th:href="@{/register}">Đăng ký</a>
-</div>
+                    <!-- Nút mua ngay -->
+                    <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                        <input type="hidden" name="carId" th:value="${car.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-cash"></i> Mua ngay
+                        </button>
+                    </form>
+
+                    <!-- Nút chi tiết -->
+                    <a th:href="@{'/cars/view/' + ${car.id}}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> Chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 </html>

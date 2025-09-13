@@ -19,6 +19,8 @@ public class CarDTO {
     private String name;
 
     @NotNull(message = "Hãng xe không được để trống")
+    private Long brandId;   // dùng cho form (select option)
+
     private String brandName ;  // id của hãng xe (Toyota, Ford...)
 
     @NotBlank(message = "Dòng xe không được để trống")
@@ -45,6 +47,7 @@ public class CarDTO {
     // Upload file
     private MultipartFile imageFile;
 
+    private String imageUrl;  // tên file ảnh đã lưu
 
     // Mô tả chi tiết
     @Size(max = 1000, message = "Mô tả tối đa 1000 ký tự")

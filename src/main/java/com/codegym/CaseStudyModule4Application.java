@@ -17,7 +17,7 @@ public class CaseStudyModule4Application implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/resources/uploads/**")
-                .addResourceLocations("file:" + "/Users/mac/Documents/Sales-Management/src/main/resources/uploads/")
+                .addResourceLocations("file:" + "D:/module4/case-study-module4/src/main/resources/uploads/")
                 .setCachePeriod(0);
     }
 }

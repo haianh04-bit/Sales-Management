@@ -9,12 +9,13 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+@Entity
+@Table(name = "orders")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class Order {
 
     private String status; // NEW, PAID, SHIPPED, CANCELLED
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id") // để CartItem biết thuộc Order nào
-    private List<CartItem> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items;
 }
+

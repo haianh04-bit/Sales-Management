@@ -11,10 +11,15 @@ public class CarMapper {
     public CarDTO toDTO(Car car) {
         if (car == null) return null;
 
+
         CarDTO dto = new CarDTO();
         dto.setId(car.getId());
         dto.setName(car.getName());
-        dto.setBrandName(car.getBrand() != null ? car.getBrand().getName() : null);
+
+        if (car.getBrand() != null) {
+            dto.setBrandId(car.getBrand().getId());   // set brandId cho form
+            dto.setBrandName(car.getBrand().getName()); // set brandName để hiển thị
+        }
         dto.setModel(car.getModel());
         dto.setYear(car.getYear());
         dto.setMileage(car.getMileage());
@@ -23,6 +28,7 @@ public class CarMapper {
         dto.setDescription(car.getDescription());
         dto.setTransmission(car.getTransmission());
         dto.setImageFile(null); // MultipartFile không map trực tiếp
+        dto.setImageUrl(car.getImageUrl()); // map từ entity sang DTO
         return dto;
     }
 
