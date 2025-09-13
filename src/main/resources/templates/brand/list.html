@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<body>
+<section layout:fragment="content">
+
+    <div class="container mt-4">
+        <h2>Danh sách hãng xe</h2>
+        <a class="btn btn-success mb-2" th:href="@{/brands/create}">Thêm hãng xe</a>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên hãng</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="brand,stat : ${brands}">
+                <td th:text="${stat.index + 1}"></td>
+                <td th:text="${brand.name}"></td>
+                <td>
+                    <a class="btn btn-warning btn-sm" th:href="@{/brands/edit/{id}(id=${brand.id})}">Sửa</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{/brands/delete/{id}(id=${brand.id})}"
+                       onclick="return confirm('Bạn có chắc muốn xoá?')">Xoá</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

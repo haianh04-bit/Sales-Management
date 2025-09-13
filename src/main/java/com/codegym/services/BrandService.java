@@ -30,41 +30,11 @@ public class BrandService {
         return (Brand) brandRepository.findByName(name).orElse(null);
     }
 
-    // Tạo brand mới
-    @Transactional
-    public Brand createBrand(String name) {
-        // Kiểm tra trùng
-        if (brandRepository.existsByNameIgnoreCase(name)) {
-            throw new RuntimeException("❌ Hãng xe này đã tồn tại!");
-        }
-
-        Brand brand = new Brand();
-        brand.setName(name);
+    public Brand save(Brand brand) {
         return brandRepository.save(brand);
     }
 
-    // Cập nhật brand
-    @Transactional
-    public Brand updateBrand(Long id, String name) {
-        Brand brand = findById(id);
-
-        // Kiểm tra trùng với brand khác
-        if (brandRepository.existsByNameIgnoreCase(name) && !brand.getName().equalsIgnoreCase(name)) {
-            throw new RuntimeException("❌ Hãng xe này đã tồn tại!");
-        }
-
-        brand.setName(name);
-        return brandRepository.save(brand);
-    }
-
-    // Xoá brand
-    @Transactional
-    public void deleteBrand(Long id) {
-        Brand brand = findById(id);
-
-        // TODO: kiểm tra ràng buộc với Car nếu cần
-        // if(carRepository.existsByBrandId(id)) { throw new RuntimeException("Hãng xe đang có xe, không thể xoá!"); }
-
-        brandRepository.delete(brand);
+    public void deleteById(Long id) {
+        brandRepository.deleteById(id);
     }
 }
