@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Lịch sử đơn hàng</title>
+</head>
+<body>
+<section layout:fragment="content" class="container mt-5">
+
+    <h2 class="mb-4">📦 Lịch sử đơn hàng</h2>
+
+    <p>Tổng số đơn hàng: <span th:text="${#lists.size(orders)}"></span></p>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="alert alert-warning">
+        Bạn chưa có đơn hàng nào.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(orders)}">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}"></td>
+                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${order.totalPrice} + ' VND'"></td>
+                <td th:text="${order.status}"></td>
+                <td>
+                    <a th:href="@{|/orders/${order.id}|}" class="btn btn-info btn-sm">Chi tiết</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+</body>
+</html>
