@@ -54,4 +54,31 @@ public class CartService {
     public void clearCart(User user) {
         cartItemRepository.deleteByUser(user);
     }
+
+    // Giảm số lượng
+    public void decreaseQuantity(Long cartItemId) {
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("CartItem not found"));
+
+        if (item.getQuantity() > 1) {
+            item.setQuantity(item.getQuantity() - 1);
+            cartItemRepository.save(item);
+        } else {
+            cartItemRepository.delete(item);
+        }
+    }
+
+    // Cập nhật số lượng
+    public void updateQuantity(Long cartItemId, int quantity) {
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("CartItem not found: " + cartItemId));
+
+        if (quantity <= 0) {
+            cartItemRepository.delete(item);
+            return;
+        }
+
+        item.setQuantity(quantity);
+        cartItemRepository.save(item);
+    }
 }

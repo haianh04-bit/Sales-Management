@@ -29,9 +29,11 @@ public class CarController {
     @GetMapping
     public String listCars(Model model) {
         List<Car> cars = carService.findAll();
+        System.out.println(">>> Total cars=" + cars.size());
         model.addAttribute("cars", cars);
         return "car/list";
     }
+
 
     // Hiển thị form tạo xe mới
     @GetMapping("/create")
@@ -47,15 +49,20 @@ public class CarController {
                             BindingResult result,
                             @RequestParam("imageFile") MultipartFile imageFile,
                             Model model) {
+        System.out.println(">>> CarDTO submit: name=" + carDTO.getName() +
+                ", brandId=" + carDTO.getBrandId());
+
         if (result.hasErrors()) {
+            System.out.println(">>> Validation errors: " + result.getAllErrors());
             model.addAttribute("brands", brandService.findAll());
             return "car/create";
         }
 
         try {
             carService.saveCar(carDTO, imageFile);
-        } catch (IOException e) {
-            model.addAttribute("error", "Lỗi upload file: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Lỗi khi lưu xe: " + e.getMessage());
             model.addAttribute("brands", brandService.findAll());
             return "car/create";
         }

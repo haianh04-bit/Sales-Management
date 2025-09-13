@@ -82,8 +82,8 @@
         <div class="col" th:each="car : ${cars}">
             <div class="card h-100 shadow-sm">
                 <a th:href="@{'/cars/view/' + ${car.id}}">
-                    <img th:if="${car.imageUrl}"
-                         th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                    <img th:if="${car.imageUrl != null}"
+                         th:src="@{/uploads/cars/{file}(file=${car.imageUrl})}"
                          class="card-img-top" alt="Car image"
                          style="height: 200px; object-fit: cover;">
                 </a>

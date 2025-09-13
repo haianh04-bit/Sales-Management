@@ -17,12 +17,17 @@
 
         <div class="mb-3">
             <label class="form-label">Hãng xe</label>
-            <select th:field="*{brandName}" class="form-select">
+            <select th:field="*{brandId}" class="form-select">
                 <option value="">-- Chọn hãng --</option>
-                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                <option th:each="brand : ${brands}"
+                        th:value="${brand.id}"
+                        th:text="${brand.name}"></option>
             </select>
-            <div class="text-danger" th:if="${#fields.hasErrors('brandId')}" th:errors="*{brandName}"></div>
+            <div class="text-danger"
+                 th:if="${#fields.hasErrors('brandId')}"
+                 th:errors="*{brandId}"></div>
         </div>
+
 
         <div class="mb-3">
             <label class="form-label">Model</label>
