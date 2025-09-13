@@ -27,7 +27,7 @@ public class ProductController {
     @GetMapping
     public String listProducts(@PageableDefault(size = 5) Pageable pageable, Model model) {
         model.addAttribute("products", productService.findAll(pageable));
-        return "products/list"; // -> /templates/product/list.html
+        return "products/list"; // -> /templates/product/profile.html
     }
 
     // ✅ Form thêm mới sản phẩm

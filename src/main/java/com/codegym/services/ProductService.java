@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private static final String UPLOAD_DIR = "D:/module4/case-study-module4/src/main/resources/uploads/products/";
+    private static final String UPLOAD_DIR = "/Users/mac/Documents/Sales-Management/src/main/resources/uploads/products";
 
     @Autowired
     private ProductRepository productRepository;

@@ -31,7 +31,12 @@ public class OtpService {
     @Autowired
     private JavaMailSender mailSender;
 
+    // Tạo user pending và gửi OTP
     public void createPendingUser(RegisterDTO dto) {
+        if (userRepository.findByEmail(dto.getEmail()) != null) {
+            throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+        }
+
         VerificationToken pending = pendingUserRepository
                 .findByEmail(dto.getEmail())
                 .orElse(new VerificationToken());
@@ -43,42 +48,42 @@ public class OtpService {
         pending.setExpiryTime(LocalDateTime.now().plusMinutes(10));
 
         pendingUserRepository.save(pending);
-
         sendOtpToEmail(dto.getEmail(), pending.getOtp());
     }
 
+    // Xác thực OTP
     public boolean verifyOtp(String email, String inputOtp) {
         Optional<VerificationToken> pendingOpt = pendingUserRepository.findByEmail(email);
         if (pendingOpt.isEmpty()) return false;
 
         VerificationToken pending = pendingOpt.get();
 
-        // check OTP
         if (!pending.getOtp().equals(inputOtp)) return false;
-
-        // check expiry
         if (pending.getExpiryTime().isBefore(LocalDateTime.now())) return false;
 
-        // Tạo user chính thức
+        activateUser(pending);
+        return true;
+    }
+
+    // Kích hoạt user chính thức từ pending
+    private void activateUser(VerificationToken pending) {
         User user = new User();
         user.setEmail(pending.getEmail());
         user.setUsername(pending.getUsername());
         user.setPassword(pending.getPassword());
-        user.setEnabled(true); // chỉ enable sau khi verify
+        user.setEnabled(true);
         user.setRole(Role.ROLE_USER);
 
         userRepository.save(user);
-
-        // xoá pending
         pendingUserRepository.delete(pending);
-
-        return true;
     }
 
+    // Tạo mã OTP ngẫu nhiên 6 chữ số
     private String generateOtp() {
         return String.valueOf((int) (Math.random() * 900000) + 100000);
     }
 
+    // Gửi email chứa mã OTP
     private void sendOtpToEmail(String to, String otp) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -99,4 +104,27 @@ public class OtpService {
             throw new RuntimeException("Gửi email thất bại!", e);
         }
     }
+
+// Tạo token để reset mật khẩu
+    public void createResetToken(String email) {
+        VerificationToken token = pendingUserRepository.findByEmail(email)
+                .orElse(new VerificationToken());
+        token.setEmail(email);
+        token.setOtp(generateOtp());
+        token.setExpiryTime(LocalDateTime.now().plusMinutes(10));
+        pendingUserRepository.save(token);
+        sendOtpToEmail(email, token.getOtp());
+    }
+
+// Xác thực token reset mật khẩu
+    public boolean verifyResetToken(String email, String inputOtp) {
+        Optional<VerificationToken> opt = pendingUserRepository.findByEmail(email);
+        if (opt.isEmpty()) return false;
+        VerificationToken token = opt.get();
+        if (!token.getOtp().equals(inputOtp)) return false;
+        if (token.getExpiryTime().isBefore(LocalDateTime.now())) return false;
+        pendingUserRepository.delete(token); // xoá token sau khi dùng
+        return true;
+    }
+
 }
