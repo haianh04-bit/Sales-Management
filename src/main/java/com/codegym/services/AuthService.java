@@ -2,22 +2,28 @@ package com.codegym.services;
 
 import com.codegym.dto.LoginDTO;
 import com.codegym.dto.RegisterDTO;
+import com.codegym.dto.UserDTO;
 import com.codegym.models.Role;
 import com.codegym.models.User;
 import com.codegym.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileUploadService fileUploadService;
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder, FileUploadService fileUploadService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.fileUploadService = fileUploadService;
     }
 
     /**
@@ -58,5 +64,28 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    // 2. Đổi mật khẩu
+    public void changePassword(Long id, String oldPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    // 3. Reset mật khẩu (quên password) -> đặt password mới (thông qua email OTP chẳng hạn)
+    public void resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }
