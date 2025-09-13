@@ -3,6 +3,8 @@ package com.codegym.repositories;
 
 import com.codegym.models.User;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +17,16 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<User, Long> {
     User findByEmail(String email);
     boolean existsByEmail(String email);
-    List<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(String keyword, String keyword1, String keyword2);
+    Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCase(
+            String username,
+            String email,
+            String phone,
+            Pageable pageable
+    );
+
+    Object findAll(Pageable pageable);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.role = 'ROLE_USER'")
+    Long countCustomers();
 }
 

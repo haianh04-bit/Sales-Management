@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>Admin Dashboard - Thống kê Showroom</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <h2 class="mb-4">📊 Thống kê Showroom Ô tô</h2>
+
+        <!-- Số liệu tổng quan -->
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white shadow mb-3">
+                    <div class="card-body">
+                        <h5>Tổng số xe</h5>
+                        <h3 th:text="${totalCars}"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white shadow mb-3">
+                    <div class="card-body">
+                        <h5>Khách hàng</h5>
+                        <h3 th:text="${totalCustomers}"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white shadow mb-3">
+                    <div class="card-body">
+                        <h5>Đơn hàng</h5>
+                        <h3 th:text="${totalOrders}"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white shadow mb-3">
+                    <div class="card-body">
+                        <h5>Doanh thu</h5>
+                        <h3 th:text="${#numbers.formatInteger(totalRevenue/1000000,0)} + ' triệu VND'"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

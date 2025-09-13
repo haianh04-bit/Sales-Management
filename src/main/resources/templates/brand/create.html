@@ -1,0 +1,20 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<body>
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Thêm hãng xe</h2>
+        <form th:action="@{/brands/create}" th:object="${brand}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Tên hãng</label>
+                <input type="text" class="form-control" th:field="*{name}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+            <a th:href="@{/brands}" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

@@ -100,15 +100,6 @@ public class UserController {
         return "redirect:/login?accountDeleted";
     }
 
-    // 🔍 Tìm kiếm user (cho admin)
-    @GetMapping("/admin/users/search")
-    public String searchUsers(@RequestParam("keyword") String keyword, Model model) {
-        List<User> users = userService.searchUsers(keyword);
-        model.addAttribute("users", users);
-        model.addAttribute("keyword", keyword);
-        return "users/list";
-    }
-
     // Xem profile người khác (nếu cần)
     @GetMapping("/{id}")
     public String viewProfile(@PathVariable("id") Long id, Model model) {
