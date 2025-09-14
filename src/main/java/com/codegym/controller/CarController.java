@@ -3,8 +3,10 @@ package com.codegym.controller;
 import com.codegym.dto.CarDTO;
 import com.codegym.mapper.CarMapper;
 import com.codegym.models.Car;
+import com.codegym.models.Review;
 import com.codegym.services.BrandService;
 import com.codegym.services.CarService;
+import com.codegym.services.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,7 +26,7 @@ public class CarController {
     private final CarService carService;
     private final BrandService brandService;
     private final CarMapper carMapper;
-
+    private final ReviewService reviewService;
     // Hiển thị danh sách xe
     @GetMapping
     public String listCars(Model model) {
@@ -114,7 +116,24 @@ public class CarController {
     @GetMapping("/view/{id}")
     public String viewCar(@PathVariable Long id, Model model) {
         Car car = carService.findById(id);
+        List<Review> reviews = reviewService.getReviewsByCar(car);
+
+        double averageRating = reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+
+        int fullStars = (int) averageRating;                // số sao đầy đủ
+        boolean halfStar = (averageRating - fullStars) >= 0.5; // có nửa sao không
+        int emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
         model.addAttribute("car", car);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("averageRating", averageRating);
+        model.addAttribute("fullStars", fullStars);
+        model.addAttribute("emptyStars", emptyStars);
+        model.addAttribute("halfStar", halfStar);
+
         return "car/view";
     }
 

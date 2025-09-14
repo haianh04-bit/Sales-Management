@@ -73,8 +73,7 @@ public class SecurityConfig {
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(7 * 24 * 60 * 60)
                         .userDetailsService(userDetailsService)
-                )
-                .csrf(csrf -> csrf.disable());
+                );
 
         return http.build();
     }

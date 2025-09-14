@@ -28,5 +28,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = 'ROLE_USER'")
     Long countCustomers();
+
 }
 
