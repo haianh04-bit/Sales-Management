@@ -23,15 +23,14 @@
             <!-- Hãng xe -->
             <div class="mb-3">
                 <label class="form-label">Hãng xe</label>
-                <select th:field="*{brandName}" class="form-select">
+                <select th:field="*{brandId}" class="form-select">
                     <option value="">-- Chọn hãng --</option>
                     <option th:each="brand : ${brands}"
-                            th:value="${brand.name}"
-                            th:text="${brand.name}"
-                            th:selected="${brand.name == car.brandName}">
+                            th:value="${brand.id}"
+                            th:text="${brand.name}">
                     </option>
                 </select>
-                <div th:if="${#fields.hasErrors('brandName')}" class="text-danger" th:errors="*{brandName}"></div>
+                <div th:if="${#fields.hasErrors('brandId')}" class="text-danger" th:errors="*{brandId}"></div>
             </div>
 
             <div class="mb-3">
@@ -76,12 +75,16 @@
                 <label class="form-label">Ảnh</label>
                 <input type="file" name="imageFile" class="form-control"/>
                 <!-- Hiển thị ảnh cũ nếu có -->
-                <div th:if="${car.imageFile}" class="mt-2">
+                <div th:if="${car.imageUrl}" class="mt-2">
                     <p>Ảnh hiện tại:</p>
-                    <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageFile})}" width="200" style="object-fit: cover;"/>
+                    <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}" width="200" style="object-fit: cover;"/>
                 </div>
             </div>
-
+            <div class="mb-3">
+                <label class="form-label">Số lượng</label>
+                <input type="number" th:field="*{quantity}" class="form-control" min="0" value="1"/>
+                <div class="text-danger" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+            </div>
             <div class="mb-3">
                 <label class="form-label">Mô tả</label>
                 <textarea th:field="*{description}" class="form-control" rows="4"></textarea>

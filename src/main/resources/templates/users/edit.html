@@ -9,7 +9,7 @@
 <body>
 <section layout:fragment="content" class="container mt-5">
     <div class="card shadow">
-        <div class="card-header bg-dark text-white">✏️ Cập nhật thông tin</div>
+        <div class="card-header bg-dark text-white"> Cập nhật thông tin</div>
         <div class="card-body">
             <form th:action="@{/user/edit}" method="post" th:object="${user}" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}"/>

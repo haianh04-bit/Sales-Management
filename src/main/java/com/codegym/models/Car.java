@@ -27,6 +27,7 @@ public class Car {
 
     @Lob
     private String description;
+    private int quantity; // <-- Thêm số lượng xe
 
     @ManyToOne
     @JoinColumn(name = "brand_id")

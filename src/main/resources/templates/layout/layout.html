@@ -3,19 +3,24 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>Shop Online</title>
+    <title>Showroom Auto</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
 </head>
 <body>
+<!-- Header -->
 <header th:replace="layout/header :: header"></header>
 
+<!-- Content -->
 <main class="container my-4">
     <section layout:fragment="content">
-        <!-- Nội dung động sẽ render ở đây -->
+        <!-- Nội dung động render tại đây -->
     </section>
 </main>
 
+<!-- Footer -->
 <footer th:replace="layout/footer :: footer"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

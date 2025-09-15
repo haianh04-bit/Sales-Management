@@ -1,13 +1,18 @@
 package com.codegym.controller;
 
 import com.codegym.models.Order;
+import com.codegym.models.OrderItem;
 import com.codegym.models.User;
+import com.codegym.services.OrderItemService;
 import com.codegym.services.OrderService;
+import com.codegym.services.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -15,17 +20,20 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final UserService userService;
+    private final OrderItemService orderItemService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserService userService, OrderItemService orderItemService) {
         this.orderService = orderService;
+        this.userService = userService;
+        this.orderItemService = orderItemService;
     }
 
-    // Xem lịch sử đơn hàng của user
     @GetMapping("/history")
-    public String viewOrders(@AuthenticationPrincipal User user, Model model) {
-        List<Order> orders = orderService.getOrdersByUser(user);
-        model.addAttribute("orders", orders);
-        return "order/list"; // cần tạo order/list.html
+    public String history(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        model.addAttribute("orders", orderService.findByUser(user));
+        return "order/list";
     }
 
     // Xem chi tiết 1 đơn hàng

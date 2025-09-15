@@ -47,7 +47,9 @@ public class CarDTO {
     // Upload file
     private MultipartFile imageFile;
 
-    private String imageUrl;  // tên file ảnh đã lưu
+    private String imageUrl;// tên file ảnh đã lưu
+
+    private int quantity;
 
     // Mô tả chi tiết
     @Size(max = 1000, message = "Mô tả tối đa 1000 ký tự")
@@ -55,5 +57,9 @@ public class CarDTO {
 
     private String transmission;
 
+    private double averageRating;
+    private int fullStars;
+    private boolean halfStar;
+    private int emptyStars;
 
 }

@@ -6,41 +6,54 @@
     <title>Lịch sử đơn hàng</title>
 </head>
 <body>
-<section layout:fragment="content" class="container mt-5">
+<section layout:fragment="content" class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-bag-check"></i> Lịch sử đơn hàng</h2>
 
-    <h2 class="mb-4">📦 Lịch sử đơn hàng</h2>
-
-    <p>Tổng số đơn hàng: <span th:text="${#lists.size(orders)}"></span></p>
-
-    <div th:if="${#lists.isEmpty(orders)}" class="alert alert-warning">
+    <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info">
         Bạn chưa có đơn hàng nào.
     </div>
 
-    <div th:unless="${#lists.isEmpty(orders)}">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-            <tr>
-                <th>Mã đơn</th>
-                <th>Ngày đặt</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${orders}">
-                <td th:text="${order.id}"></td>
-                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
-                <td th:text="${order.totalPrice} + ' VND'"></td>
-                <td th:text="${order.status}"></td>
-                <td>
-                    <a th:href="@{|/orders/${order.id}|}" class="btn btn-info btn-sm">Chi tiết</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <div th:each="order,stat : ${orders}" class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Mã đơn:</strong> <span th:text="${stat.index + 1}"></span> <br>
+                <strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <span class="badge bg-primary" th:text="${order.status}"></span>
+        </div>
 
+        <div class="card-body">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Xe</th>
+                    <th>Ảnh</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${order.items}">
+                    <td th:text="${item.car.name}"></td>
+                    <td>
+                        <img th:src="@{${item.car.imageUrl}}" alt="Car"
+                             class="img-thumbnail" style="max-width: 100px;">
+                    </td>
+                    <td th:text="${item.quantity}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                    <td th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer text-end">
+            <strong>Tổng tiền: </strong>
+            <span class="text-danger fw-bold"
+                  th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+        </div>
+    </div>
 </section>
 </body>
 </html>

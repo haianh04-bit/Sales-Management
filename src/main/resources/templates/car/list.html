@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layout/layout}">
 <head>
     <title>Danh sách Xe</title>
 </head>
 <body>
 <section layout:fragment="content">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Danh sách Xe</h2>
-        <a class="btn btn-success" th:href="@{/cars/create}">
-            <i class="bi bi-plus-circle"></i> Thêm xe
-        </a>
-    </div>
-
     <!-- Form tìm kiếm -->
     <form th:action="@{/cars/search}" method="get" class="row g-3 mb-4">
         <div class="col-md-2">
@@ -77,60 +71,115 @@
         </div>
     </form>
 
-    <!-- Danh sách xe -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="col" th:each="car : ${cars}">
-            <div class="card h-100 shadow-sm">
-                <a th:href="@{'/cars/view/' + ${car.id}}">
-                    <img th:if="${car.imageUrl}"
-                         th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
-                         class="card-img-top"
-                         style="height: 200px; object-fit: cover;"
-                         alt="Car image">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${car.name}"></h5>
-                    <p class="card-text">
-                        <strong>Giá:</strong>
-                        <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
-                    </p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <a th:href="@{'/cars/edit/' + ${car.id}}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-pencil"></i> Sửa
-                    </a>
-                    <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-danger btn-sm"
-                       onclick="return confirm('Bạn có chắc muốn xoá?');">
-                        <i class="bi bi-trash"></i> Xoá
-                    </a>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <!-- Nút thêm giỏ hàng -->
-                    <form th:action="@{/cart/add}" method="post" style="display:inline;">
-                        <input type="hidden" name="carId" th:value="${car.id}">
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
-                        </button>
-                    </form>
+    <!-- Phần dành cho ADMIN -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Quản lý xe </h2>
+            <a class="btn btn-success" th:href="@{/cars/create}">
+                <i class="bi bi-plus-circle"></i> Thêm xe
+            </a>
+        </div>
 
-                    <!-- Nút mua ngay -->
-                    <form th:action="@{/cart/buy}" method="post" style="display:inline;">
-                        <input type="hidden" name="carId" th:value="${car.id}">
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="bi bi-cash"></i> Mua ngay
-                        </button>
-                    </form>
+        <div class="table-responsive mb-5">
+            <table class="table table-striped table-bordered align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên xe</th>
+                    <th>Hãng</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Quản lý</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="car : ${cars}">
+                    <td>
+                        <img th:if="${car.imageUrl}"
+                             th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                             style="height:60px; width:100px; object-fit:cover;">
+                    </td>
+                    <td th:text="${car.name}"></td>
+                    <td th:text="${car.brandName}"></td>
+                    <td th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')} + ' VND'"></td>
+                    <td th:text="${car.quantity}"></td>
+                    <td>
+                        <a th:href="@{'/cars/edit/' + ${car.id}}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </a>
+                        <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Bạn có chắc muốn xoá?');">
+                            <i class="bi bi-trash"></i> Xoá
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                    <!-- Nút chi tiết -->
-                    <a th:href="@{'/cars/view/' + ${car.id}}" class="btn btn-info btn-sm">
-                        <i class="bi bi-eye"></i> Chi tiết
+    <!-- Phần dành cho USER -->
+    <div sec:authorize="hasRole('USER')">
+        <h2 class="mb-4">Danh sách xe</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="car : ${cars}">
+                <div class="card h-100 shadow-sm border-0">
+                    <a th:href="@{'/cars/view/' + ${car.id}}">
+                        <img th:if="${car.imageUrl}"
+                             th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                             class="card-img-top"
+                             style="height: 200px; object-fit: cover;"
+                             alt="Car image">
                     </a>
+                    <div class="card-body">
+                        <a th:href="@{'/cars/view/' + ${car.id}}">
+                            <h5 class="card-title" th:text="${car.name}"></h5>
+                        </a>
+                        <p class="card-text text-muted mb-1">
+                            <i class="bi bi-cash"></i>
+                            <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
+                        </p>
+                        <p class="mb-1">
+                            <i class="bi bi-box-seam"></i> Số lượng: <span th:text="${car.quantity}"></span>
+                        </p>
+                        <p>
+                            <span th:each="i : ${#numbers.sequence(1, car.fullStars)}">
+                                <i class="bi bi-star-fill text-warning"></i>
+                            </span>
+                            <span th:if="${car.halfStar}">
+                                <i class="bi bi-star-half text-warning"></i>
+                            </span>
+                            <span th:each="i : ${#numbers.sequence(1, car.emptyStars)}">
+                                <i class="bi bi-star text-secondary"></i>
+                            </span>
+                            (<span th:text="${#numbers.formatDecimal(car.averageRating,1,'COMMA',1,'POINT')}">0</span>)
+                        </p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-white">
+                        <!-- Nút thêm giỏ hàng -->
+                        <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                            <input type="hidden" name="carId" th:value="${car.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-sm btn-primary"
+                                    th:disabled="${car.quantity == 0}">
+                                <i class="bi bi-cart-plus"></i> Thêm giỏ
+                            </button>
+                        </form>
+                        <!-- Nút mua ngay -->
+                        <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                            <input type="hidden" name="carId" th:value="${car.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-success btn-sm"
+                                    th:disabled="${car.quantity == 0}">
+                                <i class="bi bi-cash"></i> Mua ngay
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 </section>
 </body>
 </html>

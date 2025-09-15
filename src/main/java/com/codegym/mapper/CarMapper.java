@@ -29,6 +29,7 @@ public class CarMapper {
         dto.setTransmission(car.getTransmission());
         dto.setImageFile(null); // MultipartFile không map trực tiếp
         dto.setImageUrl(car.getImageUrl()); // map từ entity sang DTO
+        dto.setQuantity(car.getQuantity()); // Thêm số lượng
         return dto;
     }
 
@@ -62,5 +63,6 @@ public class CarMapper {
         car.setPrice(dto.getPrice());
         car.setDescription(dto.getDescription());
         car.setTransmission(dto.getTransmission());
+        car.setQuantity(dto.getQuantity());
     }
 }

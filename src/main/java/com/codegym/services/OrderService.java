@@ -1,9 +1,9 @@
 package com.codegym.services;
 
-import com.codegym.models.CartItem;
-import com.codegym.models.Order;
-import com.codegym.models.OrderItem;
-import com.codegym.models.User;
+import com.codegym.models.*;
+import com.codegym.repositories.CarRepository;
+import com.codegym.repositories.CartItemRepository;
+import com.codegym.repositories.OrderItemRepository;
 import com.codegym.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,48 +16,68 @@ import java.util.List;
 @Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final CartService cartService;
+    private final CarRepository carRepository;
+    private final CartItemRepository cartItemRepository;
 
-    public OrderService(OrderRepository orderRepository, CartService cartService) {
+    public OrderService(OrderRepository orderRepository, CarRepository carRepository, CartItemRepository cartItemRepository) {
         this.orderRepository = orderRepository;
-        this.cartService = cartService;
+        this.carRepository = carRepository;
+        this.cartItemRepository = cartItemRepository;
     }
 
     //thanh toán giỏ hàng và tạo đơn hàng
-    public Order checkout(User user) {
-        List<CartItem> cartItems = cartService.getCart(user);
+    @Transactional
+    public Order checkout(User user, List<CartItem> cartItems) {
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Giỏ hàng trống");
+        }
 
-        double total = 0;
+        // Tạo Order mới
         Order order = new Order();
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("NEW");
 
         List<OrderItem> orderItems = new ArrayList<>();
+        double total = 0;
+
         for (CartItem ci : cartItems) {
+            var car = carRepository.findById(ci.getCar().getId())
+                    .orElseThrow(() -> new RuntimeException("Xe không tồn tại"));
+
+            if (car.getQuantity() < ci.getQuantity()) {
+                throw new RuntimeException("Không đủ số lượng cho xe: " + car.getName());
+            }
+
+            // Trừ số lượng kho
+            car.setQuantity(car.getQuantity() - ci.getQuantity());
+            carRepository.save(car);
+
+            // Tạo OrderItem
             OrderItem oi = new OrderItem();
-            oi.setCar(ci.getCar());
-            oi.setQuantity(ci.getQuantity());
-            oi.setPrice(ci.getCar().getPrice()); // snapshot giá
             oi.setOrder(order);
+            oi.setCar(car);
+            oi.setQuantity(ci.getQuantity());
+            oi.setPrice(car.getPrice());
             orderItems.add(oi);
 
-            total += ci.getCar().getPrice() * ci.getQuantity();
+            total += ci.getQuantity() * car.getPrice();
         }
 
         order.setTotalPrice(total);
         order.setItems(orderItems);
 
-        orderRepository.save(order);
+        // Lưu Order + OrderItem
+        Order savedOrder = orderRepository.save(order);
 
-        // Xoá giỏ hàng sau khi đã copy sang Order
-        cartService.clearCart(user);
+        // Xoá giỏ hàng sau khi lưu thành công
+        cartItemRepository.deleteAll(cartItems);
 
-        return order;
+        return savedOrder;
     }
 
-    //lấy danh sách đơn hàng của người dùng
-    public List<Order> getOrdersByUser(User user) {
+
+    public List<Order> findByUser(User user) {
         return orderRepository.findByUser(user);
     }
 
@@ -72,6 +92,10 @@ public class OrderService {
         Order order = getOrderById(id);
         order.setStatus(status);
         orderRepository.save(order);
+    }
+
+    public List<Order> getAllOrdersWithUserAndItems() {
+        return orderRepository.findAllWithUserAndItems();
     }
 
 }

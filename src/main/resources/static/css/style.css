@@ -1,0 +1,11 @@
+.floating-buttons {
+    position: fixed; /* Giữ nguyên vị trí khi cuộn trang */
+    top: 20px; /* Cách mép trên 20px */
+    right: 20px; /* Cách mép phải 20px */
+    z-index: 1000; /* Luôn hiển thị trên các phần tử khác */
+}
+
+.floating-buttons .btn {
+    display: flex;
+    align-items: center;
+}

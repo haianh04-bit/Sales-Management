@@ -2,6 +2,7 @@ package com.codegym.controller;
 
 import com.codegym.dto.CarDTO;
 import com.codegym.mapper.CarMapper;
+import com.codegym.models.Brand;
 import com.codegym.models.Car;
 import com.codegym.models.Review;
 import com.codegym.services.BrandService;
@@ -31,7 +32,28 @@ public class CarController {
     @GetMapping
     public String listCars(Model model) {
         List<Car> cars = carService.findAll();
-        model.addAttribute("cars", cars);
+
+        List<CarDTO> carDTOs = cars.stream().map(car -> {
+            double avg = reviewService.getAverageRatingByCar(car.getId()); // lấy rating trung bình
+            int fullStars = (int) avg;
+            boolean halfStar = (avg - fullStars) >= 0.5;
+            int emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+            return CarDTO.builder()
+                    .id(car.getId())
+                    .name(car.getName())
+                    .imageUrl(car.getImageUrl())
+                    .price(car.getPrice())
+                    .quantity(car.getQuantity())
+                    .averageRating(avg)
+                    .fullStars(fullStars)
+                    .halfStar(halfStar)
+                    .emptyStars(emptyStars)
+                    .brandName(car.getBrand() != null ? car.getBrand().getName() : null)
+                    .build();
+        }).toList();
+
+        model.addAttribute("cars", carDTOs);
         return "car/list";
     }
 
@@ -44,7 +66,7 @@ public class CarController {
         return "car/create";
     }
 
-    // Thêm xe mới
+    // Thêm xe mới (nếu tồn tại thì cộng số lượng)
     @PostMapping("/create")
     public String createCar(@Valid @ModelAttribute("car") CarDTO carDTO,
                             BindingResult result,
@@ -52,13 +74,13 @@ public class CarController {
                             Model model) {
 
         if (result.hasErrors()) {
-            System.out.println(">>> Validation errors: " + result.getAllErrors());
             model.addAttribute("brands", brandService.findAll());
             return "car/create";
         }
 
         try {
-            carService.saveCar(carDTO, imageFile);
+            Brand brand = brandService.findById(carDTO.getBrandId());
+            carService.createOrUpdateCar(carDTO, brand, String.valueOf(imageFile));
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "Lỗi khi lưu xe: " + e.getMessage());
@@ -75,6 +97,7 @@ public class CarController {
         Car car = carService.findById(id);
         CarDTO dto = carMapper.toDTO(car); // map entity -> DTO
         if (car.getBrand() != null) {
+            dto.setBrandId(car.getBrand().getId());
             dto.setBrandName(car.getBrand().getName()); // brandName là String
         }
         model.addAttribute("car", dto);

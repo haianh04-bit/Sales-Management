@@ -70,6 +70,11 @@
             <input type="number" th:field="*{price}" class="form-control" step="0.01"/>
             <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
         </div>
+        <div class="mb-3">
+            <label class="form-label">Số lượng</label>
+            <input type="number" th:field="*{quantity}" class="form-control" min="0" value="1"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+        </div>
 
         <div class="mb-3">
             <label class="form-label">Ảnh</label>
