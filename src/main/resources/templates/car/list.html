@@ -17,53 +17,63 @@
                 <option th:each="brand : ${brands}"
                         th:value="${brand.name}"
                         th:text="${brand.name}"
-                        th:selected="${brand.name == brandSelected}">
+                        th:selected="${brand.name != null} ? ${brand.name.equals(brandSelected)} : false">
                 </option>
             </select>
         </div>
 
+        <!-- Model -->
         <div class="col-md-2">
             <label class="form-label">Model</label>
             <input type="text" name="model" class="form-control"
-                   th:value="${modelSelected}">
+                   th:value="${modelSelected != null} ? ${modelSelected} : ''">
         </div>
 
+        <!-- Đời xe -->
         <div class="col-md-1">
             <label class="form-label">Đời xe</label>
             <input type="number" name="year" class="form-control"
-                   th:value="${yearSelected}">
+                   th:value="${yearSelected != null} ? ${yearSelected} : ''"
+                   min="1990" max="2025">
         </div>
 
+        <!-- Tình trạng -->
         <div class="col-md-2">
             <label class="form-label">Tình trạng</label>
             <select name="condition" class="form-select">
                 <option value="">-- Tất cả --</option>
-                <option value="mới" th:selected="${conditionSelected=='mới'}">Mới</option>
-                <option value="cũ" th:selected="${conditionSelected=='cũ'}">Cũ</option>
+                <option value="mới" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('mới')} : false">Mới</option>
+                <option value="cũ" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('cũ')} : false">Cũ</option>
             </select>
         </div>
 
+        <!-- Hộp số -->
         <div class="col-md-2">
             <label class="form-label">Hộp số</label>
             <select name="transmission" class="form-select">
                 <option value="">-- Tất cả --</option>
-                <option value="Tự động" th:selected="${transmissionSelected=='Tự động'}">Tự động</option>
-                <option value="Số sàn" th:selected="${transmissionSelected=='Số sàn'}">Số sàn</option>
+                <option value="Tự động" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Tự động')} : false">Tự động</option>
+                <option value="Số sàn" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Số sàn')} : false">Số sàn</option>
             </select>
         </div>
 
+        <!-- Giá min -->
         <div class="col-md-1">
             <label class="form-label">Giá min</label>
             <input type="number" name="minPrice" class="form-control"
-                   th:value="${minPriceSelected}" step="1000000">
+                   th:value="${minPriceSelected != null} ? ${minPriceSelected} : ''"
+                   step="1000000" min="0">
         </div>
 
+        <!-- Giá max -->
         <div class="col-md-1">
             <label class="form-label">Giá max</label>
             <input type="number" name="maxPrice" class="form-control"
-                   th:value="${maxPriceSelected}" step="1000000">
+                   th:value="${maxPriceSelected != null} ? ${maxPriceSelected} : ''"
+                   step="1000000" min="0">
         </div>
 
+        <!-- Nút tìm kiếm -->
         <div class="col-md-1 align-self-end">
             <button type="submit" class="btn btn-primary w-100">
                 <i class="bi bi-search"></i> Tìm kiếm

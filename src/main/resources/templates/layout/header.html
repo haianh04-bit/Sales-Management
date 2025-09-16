@@ -69,6 +69,11 @@
                                     <i class="bi bi-person-badge"></i> Hồ sơ
                                 </a>
                             </li>
+                            <li sec:authorize="hasRole('USER')">
+                                <a class="dropdown-item" th:href="@{/change-password}">
+                                    <i class="bi bi-person-badge"></i> Đổi mật khẩu
+                                </a>
+                            </li>
                             <li sec:authorize="hasRole('ADMIN')">
                                 <a class="dropdown-item" th:href="@{/admin/carts}">
                                     <i class="bi bi-cart-check"></i> Giỏ hàng của người dùng
@@ -148,7 +153,34 @@
             display: flex;
             align-items: center;
         }
+
+        .floating-chat {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000; /* cao hơn giỏ hàng và navbar */
+        }
+
+        #chat-box {
+            display: none;
+            width: 300px;
+            position: fixed; /* đổi từ absolute -> fixed */
+            bottom: 60px; /* cách nút chat */
+            right: 20px;
+            z-index: 2001; /* cao hơn nút chat */
+        }
     </style>
+    <div class="floating-chat" sec:authorize="hasRole('USER')">
+        <a th:href="@{user/chat/inbox}" class="btn btn-primary" id="chat-user">
+            <i class="bi bi-chat-dots"></i> Chat
+        </a>
+    </div>
+    <div class="floating-chat" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/admin/chat/inbox}" class="btn btn-primary" id="chat-admin">
+            <i class="bi bi-chat-dots"></i> Chat
+        </a>
+    </div>
+
 </div>
 </body>
 </html>

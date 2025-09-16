@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
             return "auth/change-password";
         }
-        return "redirect:/user/profile?passwordChanged";
+        return "redirect:/home?passwordChanged";
     }
 
     // Form quên mật khẩu
@@ -133,13 +134,17 @@ public class AuthController {
     public String resetPassword(@RequestParam("email") String email,
                                 @RequestParam("otp") String otp,
                                 @RequestParam("newPassword") String newPassword,
+                                RedirectAttributes redirectAttributes,
                                 Model model) {
         if (!otpService.verifyResetToken(email, otp)) {
             model.addAttribute("error", "OTP không hợp lệ hoặc đã hết hạn!");
+            model.addAttribute("message", "Mã OTP đã được gửi đến email của bạn!");
             model.addAttribute("email", email);
             return "auth/reset-password";
         }
         authService.resetPassword(email, newPassword);
+        // Gửi thông báo thành công
+        redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
         return "redirect:/login?passwordReset";
     }
 

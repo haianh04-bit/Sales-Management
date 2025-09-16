@@ -84,6 +84,13 @@
             </a>
         </div>
     </div>
+    <div th:if="${param.passwordChanged}"
+         class="alert alert-success alert-dismissible fade show"
+         role="alert"
+         style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; min-width: 250px;">
+        Mật khẩu đã được thay đổi thành công!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 </section>
 
 </body>

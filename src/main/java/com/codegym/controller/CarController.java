@@ -171,10 +171,31 @@ public class CarController {
                              Model model) {
 
         List<Car> cars = carService.searchCars(brand, modelName, year, condition, transmission, minPrice, maxPrice);
-        model.addAttribute("cars", cars);
+
+        List<CarDTO> carDTOs = cars.stream().map(car -> {
+            double avg = reviewService.getAverageRatingByCar(car.getId());
+            int fullStars = (int) avg;
+            boolean halfStar = (avg - fullStars) >= 0.5;
+            int emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+            return CarDTO.builder()
+                    .id(car.getId())
+                    .name(car.getName())
+                    .imageUrl(car.getImageUrl())
+                    .price(car.getPrice())
+                    .quantity(car.getQuantity())
+                    .averageRating(avg)
+                    .fullStars(fullStars)
+                    .halfStar(halfStar)
+                    .emptyStars(emptyStars)
+                    .brandName(car.getBrand() != null ? car.getBrand().getName() : null)
+                    .build();
+        }).toList();
+
+        model.addAttribute("cars", carDTOs);
         model.addAttribute("brands", brandService.findAll());
 
-        // Giữ lại giá trị search trên form
+        // giữ lại giá trị search trên form
         model.addAttribute("brandSelected", brand);
         model.addAttribute("modelSelected", modelName);
         model.addAttribute("yearSelected", year);

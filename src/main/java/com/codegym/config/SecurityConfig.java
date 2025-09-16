@@ -46,6 +46,12 @@ public class SecurityConfig {
                         .requestMatchers("/", "/home", "/login", "/register",
                                 "/verify-otp", "/forgot-password", "/reset-password",
                                 "/resources/**").permitAll()
+                        // Chat admin
+                        .requestMatchers("/admin/chat/**").authenticated()
+
+                        // Chat user
+                        .requestMatchers("/user/chat/**").authenticated()
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**", "/order/**", "/user/**").hasRole("USER")
                         .anyRequest().authenticated()
