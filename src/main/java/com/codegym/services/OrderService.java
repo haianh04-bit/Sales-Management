@@ -102,4 +102,8 @@ public class OrderService {
     public Optional<Order> findById(Long id) {
         return orderRepository.findById(id);
     }
+
+    public long countOrdersByUser(Long userId) {
+        return orderRepository.countByUserId(userId);
+    }
 }

@@ -144,7 +144,7 @@
                         <p class="mb-1">
                             <i class="bi bi-box-seam"></i> Số lượng: <span th:text="${car.quantity}"></span>
                         </p>
-                        <p>
+                        <p th:if="${car.averageRating > 0}">
                             <span th:each="i : ${#numbers.sequence(1, car.fullStars)}">
                                 <i class="bi bi-star-fill text-warning"></i>
                             </span>
@@ -154,7 +154,15 @@
                             <span th:each="i : ${#numbers.sequence(1, car.emptyStars)}">
                                 <i class="bi bi-star text-secondary"></i>
                             </span>
-                            (<span th:text="${#numbers.formatDecimal(car.averageRating,1,'COMMA',1,'POINT')}">0</span>)
+                            (<span th:text="${#numbers.formatDecimal(car.averageRating,1,1)}">0</span>)
+                        </p>
+                        <p th:if="${car.averageRating == 0}">
+                            <i class="bi bi-star text-secondary"></i>
+                            <i class="bi bi-star text-secondary"></i>
+                            <i class="bi bi-star text-secondary"></i>
+                            <i class="bi bi-star text-secondary"></i>
+                            <i class="bi bi-star text-secondary"></i>
+                            (Chưa có đánh giá)
                         </p>
                     </div>
                     <div class="card-footer d-flex justify-content-between bg-white" sec:authorize="hasRole('USER')">

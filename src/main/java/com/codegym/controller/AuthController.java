@@ -67,13 +67,14 @@ public class AuthController {
     @PostMapping("/verify-otp")
     public String verifyOtp(@RequestParam("email") String email,
                             @RequestParam("otp") String otp,
+                            RedirectAttributes redirectAttributes,
                             Model model) {
         if (!otpService.verifyOtp(email, otp)) {
             model.addAttribute("error", "OTP không hợp lệ hoặc đã hết hạn!");
             model.addAttribute("email", email);
             return "auth/verify-otp";
         }
-        model.addAttribute("success", "Xác thực thành công! Bạn có thể đăng nhập.");
+        redirectAttributes.addFlashAttribute("success", "Xác thực thành công! Bạn có thể đăng nhập.");
         return "redirect:/login";
     }
 
@@ -90,7 +91,15 @@ public class AuthController {
                                  @RequestParam("newPassword") String newPassword,
                                  Model model) {
         String email = authentication.getName();
-        User user = authService.login(new LoginDTO(email, oldPassword)); // validate login
+        User user;
+        try {
+            // Kiểm tra mật khẩu cũ
+            user = authService.login(new LoginDTO(email, oldPassword));
+        } catch (RuntimeException e) {
+            // Sai mật khẩu cũ
+            model.addAttribute("error", "Mật khẩu cũ không đúng!");
+            return "auth/change-password";
+        }
         try {
             authService.changePassword(user.getId(), oldPassword, newPassword);
         } catch (RuntimeException e) {

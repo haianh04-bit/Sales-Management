@@ -19,4 +19,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o JOIN FETCH o.user u JOIN FETCH o.items oi JOIN FETCH oi.car ORDER BY o.id")
     List<Order> findAllWithUserAndItems();
 
+    long countByUserId(Long userId);
 }

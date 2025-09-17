@@ -101,8 +101,10 @@ public class CartController {
 
         try {
             Order order = orderService.checkout(user, cartItems);
+            long orderCount = orderService.countOrdersByUser(user.getId());
+
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Đặt hàng thành công! Mã đơn: " + order.getId());
+                    "Đặt hàng thành công! Mã đơn: " + orderCount);
             return "redirect:/orders/history";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi đặt hàng: " + e.getMessage());
