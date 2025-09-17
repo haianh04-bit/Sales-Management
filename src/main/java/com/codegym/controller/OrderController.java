@@ -21,12 +21,10 @@ public class OrderController {
 
     private final OrderService orderService;
     private final UserService userService;
-    private final OrderItemService orderItemService;
 
-    public OrderController(OrderService orderService, UserService userService, OrderItemService orderItemService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
         this.userService = userService;
-        this.orderItemService = orderItemService;
     }
 
     @GetMapping("/history")
@@ -36,12 +34,17 @@ public class OrderController {
         return "order/list";
     }
 
-    // Xem chi tiết 1 đơn hàng
     @GetMapping("/{id}")
-    public String viewOrderDetail(@PathVariable Long id, Model model) {
-        Order order = orderService.getOrderById(id);
+    public String orderDetail(@PathVariable Long id,
+                              @RequestParam(required = false) Integer stt,
+                              Model model) {
+        Order order = orderService.findById(id).orElse(null);
+        if (order == null) {
+            throw new RuntimeException("Không tìm thấy đơn hàng");
+        }
         model.addAttribute("order", order);
-        return "order/detail"; // cần tạo order/detail.html
+        model.addAttribute("stt", stt); // truyền stt ra view
+        return "order/detail";
     }
 
     // (Tùy chọn) Admin có thể cập nhật trạng thái đơn hàng

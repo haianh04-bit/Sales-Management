@@ -54,9 +54,10 @@ public class CarController {
         }).toList();
 
         model.addAttribute("cars", carDTOs);
+        model.addAttribute("brands", brandService.findAll());
+
         return "car/list";
     }
-
 
     // Hiển thị form tạo xe mới
     @GetMapping("/create")
@@ -79,8 +80,7 @@ public class CarController {
         }
 
         try {
-            Brand brand = brandService.findById(carDTO.getBrandId());
-            carService.createOrUpdateCar(carDTO, brand, String.valueOf(imageFile));
+            carService.saveCar(carDTO, imageFile);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "Lỗi khi lưu xe: " + e.getMessage());
@@ -125,7 +125,7 @@ public class CarController {
             return "car/edit";
         }
 
-        return "redirect:/cars/view/" + id;
+        return "redirect:/cars";
     }
 
     // Xoá xe

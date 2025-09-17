@@ -5,93 +5,118 @@
       layout:decorate="~{layout/layout}">
 <head>
     <title>Danh sách Xe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Search form styling */
+        .search-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* Card hover */
+        .car-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .car-card img {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .price-tag {
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
 </head>
 <body>
-<section layout:fragment="content">
+<section layout:fragment="content" class="container mt-4">
+
     <!-- Form tìm kiếm -->
-    <form th:action="@{/cars/search}" method="get" class="row g-3 mb-4">
-        <div class="col-md-2">
-            <label class="form-label">Hãng xe</label>
-            <select name="brand" class="form-select">
-                <option value="">-- Tất cả --</option>
-                <option th:each="brand : ${brands}"
-                        th:value="${brand.name}"
-                        th:text="${brand.name}"
-                        th:selected="${brand.name != null} ? ${brand.name.equals(brandSelected)} : false">
-                </option>
-            </select>
-        </div>
+    <div class="search-box mb-4">
+        <form th:action="@{/cars/search}" method="get" class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Hãng xe</label>
+                <select name="brand" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option th:each="brand : ${brands}"
+                            th:value="${brand.name}"
+                            th:text="${brand.name}"
+                            th:selected="${brand.name != null} ? ${brand.name.equals(brandSelected)} : false">
+                    </option>
+                </select>
+            </div>
 
-        <!-- Model -->
-        <div class="col-md-2">
-            <label class="form-label">Model</label>
-            <input type="text" name="model" class="form-control"
-                   th:value="${modelSelected != null} ? ${modelSelected} : ''">
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Model</label>
+                <input type="text" name="model" class="form-control"
+                       th:value="${modelSelected != null} ? ${modelSelected} : ''">
+            </div>
 
-        <!-- Đời xe -->
-        <div class="col-md-1">
-            <label class="form-label">Đời xe</label>
-            <input type="number" name="year" class="form-control"
-                   th:value="${yearSelected != null} ? ${yearSelected} : ''"
-                   min="1990" max="2025">
-        </div>
+            <div class="col-md-1">
+                <label class="form-label">Năm</label>
+                <input type="number" name="year" class="form-control"
+                       th:value="${yearSelected != null} ? ${yearSelected} : ''"
+                       min="1990" max="2025">
+            </div>
 
-        <!-- Tình trạng -->
-        <div class="col-md-2">
-            <label class="form-label">Tình trạng</label>
-            <select name="condition" class="form-select">
-                <option value="">-- Tất cả --</option>
-                <option value="mới" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('mới')} : false">Mới</option>
-                <option value="cũ" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('cũ')} : false">Cũ</option>
-            </select>
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Tình trạng</label>
+                <select name="condition" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="mới" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('mới')} : false">Mới</option>
+                    <option value="cũ" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('cũ')} : false">Cũ</option>
+                </select>
+            </div>
 
-        <!-- Hộp số -->
-        <div class="col-md-2">
-            <label class="form-label">Hộp số</label>
-            <select name="transmission" class="form-select">
-                <option value="">-- Tất cả --</option>
-                <option value="Tự động" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Tự động')} : false">Tự động</option>
-                <option value="Số sàn" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Số sàn')} : false">Số sàn</option>
-            </select>
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Hộp số</label>
+                <select name="transmission" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="Tự động" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Tự động')} : false">Tự động</option>
+                    <option value="Số sàn" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Số sàn')} : false">Số sàn</option>
+                </select>
+            </div>
 
-        <!-- Giá min -->
-        <div class="col-md-1">
-            <label class="form-label">Giá min</label>
-            <input type="number" name="minPrice" class="form-control"
-                   th:value="${minPriceSelected != null} ? ${minPriceSelected} : ''"
-                   step="1000000" min="0">
-        </div>
+            <div class="col-md-1">
+                <label class="form-label">Giá min</label>
+                <input type="number" name="minPrice" class="form-control"
+                       th:value="${minPriceSelected != null} ? ${minPriceSelected} : ''"
+                       step="1000000" min="0">
+            </div>
 
-        <!-- Giá max -->
-        <div class="col-md-1">
-            <label class="form-label">Giá max</label>
-            <input type="number" name="maxPrice" class="form-control"
-                   th:value="${maxPriceSelected != null} ? ${maxPriceSelected} : ''"
-                   step="1000000" min="0">
-        </div>
+            <div class="col-md-1">
+                <label class="form-label">Giá max</label>
+                <input type="number" name="maxPrice" class="form-control"
+                       th:value="${maxPriceSelected != null} ? ${maxPriceSelected} : ''"
+                       step="1000000" min="0">
+            </div>
 
-        <!-- Nút tìm kiếm -->
-        <div class="col-md-1 align-self-end">
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="bi bi-search"></i> Tìm kiếm
-            </button>
-        </div>
-    </form>
+            <div class="col-md-1 align-self-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
 
-    <!-- Phần dành cho ADMIN -->
+    <!-- ADMIN quản lý -->
     <div sec:authorize="hasRole('ADMIN')">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Quản lý xe </h2>
+            <h2>Quản lý xe</h2>
             <a class="btn btn-success" th:href="@{/cars/create}">
                 <i class="bi bi-plus-circle"></i> Thêm xe
             </a>
         </div>
 
         <div class="table-responsive mb-5">
-            <table class="table table-striped table-bordered align-middle">
+            <table class="table table-hover align-middle">
                 <thead class="table-dark">
                 <tr>
                     <th>Ảnh</th>
@@ -99,27 +124,29 @@
                     <th>Hãng</th>
                     <th>Giá</th>
                     <th>Số lượng</th>
-                    <th>Quản lý</th>
+                    <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="car : ${cars}">
                     <td>
-                        <img th:if="${car.imageUrl}"
-                             th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
-                             style="height:60px; width:100px; object-fit:cover;">
+                        <a th:href="@{'/cars/view/' + ${car.id}}">
+                            <img th:if="${car.imageUrl}"
+                                 th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                                 style="height:60px; width:100px; object-fit:cover; border-radius:6px;">
+                        </a>
                     </td>
                     <td th:text="${car.name}"></td>
                     <td th:text="${car.brandName}"></td>
-                    <td th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')} + ' VND'"></td>
+                    <td class="price-tag" th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')} + ' VND'"></td>
                     <td th:text="${car.quantity}"></td>
                     <td>
-                        <a th:href="@{'/cars/edit/' + ${car.id}}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-pencil"></i> Sửa
+                        <a th:href="@{'/cars/edit/' + ${car.id}}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
                         </a>
-                        <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-sm btn-danger"
+                        <a th:href="@{'/cars/delete/' + ${car.id}}" class="btn btn-sm btn-outline-danger"
                            onclick="return confirm('Bạn có chắc muốn xoá?');">
-                            <i class="bi bi-trash"></i> Xoá
+                            <i class="bi bi-trash"></i>
                         </a>
                     </td>
                 </tr>
@@ -128,12 +155,12 @@
         </div>
     </div>
 
-    <!-- Phần dành cho USER -->
+    <!-- USER xem danh sách -->
     <div sec:authorize="hasRole('USER')">
-        <h2 class="mb-4">Danh sách xe</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <h2 class="mb-3">Danh sách xe</h2>
+        <div class="row row-cols-1 row-cols-md-4 g-3">
             <div class="col" th:each="car : ${cars}">
-                <div class="card h-100 shadow-sm border-0">
+                <div class="card car-card h-100 shadow-sm border-0">
                     <a th:href="@{'/cars/view/' + ${car.id}}">
                         <img th:if="${car.imageUrl}"
                              th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
@@ -142,15 +169,20 @@
                              alt="Car image">
                     </a>
                     <div class="card-body">
-                        <a th:href="@{'/cars/view/' + ${car.id}}">
-                            <h5 class="card-title" th:text="${car.name}"></h5>
-                        </a>
-                        <p class="card-text text-muted mb-1">
+                        <h5 class="card-title">
+                            <a th:href="@{'/cars/view/' + ${car.id}}" class="text-decoration-none text-dark"
+                               th:text="${car.name}"></a>
+                        </h5>
+                        <p class="card-text mb-1 text-muted">
+                            <i class="bi bi-building"></i>
+                            <span th:text="${car.brandName}"></span>
+                        </p>
+                        <p class="price-tag mb-1">
                             <i class="bi bi-cash"></i>
                             <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
                         </p>
                         <p class="mb-1">
-                            <i class="bi bi-box-seam"></i> Số lượng: <span th:text="${car.quantity}"></span>
+                            <i class="bi bi-box-seam"></i> SL: <span th:text="${car.quantity}"></span>
                         </p>
                         <p>
                             <span th:each="i : ${#numbers.sequence(1, car.fullStars)}">
@@ -165,23 +197,21 @@
                             (<span th:text="${#numbers.formatDecimal(car.averageRating,1,'COMMA',1,'POINT')}">0</span>)
                         </p>
                     </div>
-                    <div class="card-footer d-flex justify-content-between bg-white">
-                        <!-- Nút thêm giỏ hàng -->
-                        <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                    <div class="card-footer d-flex justify-content-between bg-white border-0">
+                        <form th:action="@{/cart/add}" method="post">
                             <input type="hidden" name="carId" th:value="${car.id}">
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-sm btn-primary"
+                            <button type="submit" class="btn btn-sm btn-outline-primary"
                                     th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cart-plus"></i> Thêm giỏ
+                                <i class="bi bi-cart-plus"></i> Giỏ hàng
                             </button>
                         </form>
-                        <!-- Nút mua ngay -->
-                        <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                        <form th:action="@{/cart/buy}" method="post">
                             <input type="hidden" name="carId" th:value="${car.id}">
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-success btn-sm"
+                            <button type="submit" class="btn btn-sm btn-outline-success"
                                     th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cash"></i> Mua ngay
+                                <i class="bi bi-lightning-charge"></i> Mua ngay
                             </button>
                         </form>
                     </div>

@@ -65,6 +65,7 @@ public class CarService {
     public long countCars() {
         return carRepository.count();
     }
+
     // Lưu xe mới từ DTO và ảnh
     public Car saveCar(CarDTO dto, MultipartFile imageFile) throws IOException {
         Car car = carMapper.toEntity(dto);
@@ -169,29 +170,5 @@ public class CarService {
         return carRepository.findAll(spec);
     }
 
-    public Car createOrUpdateCar(CarDTO dto, Brand brand, String imageUrl) {
-        // Tìm xe đã tồn tại: cùng name, model, year, transmission, condition, price
-        Optional<Car> existingCar = carRepository.findByNameAndModelAndYearAndTransmissionAndConditionAndPrice(
-                dto.getName(),
-                dto.getModel(),
-                dto.getYear(),
-                dto.getTransmission(),
-                dto.getCondition(),
-                dto.getPrice()
-        );
-
-        if (existingCar.isPresent()) {
-            Car car = existingCar.get();
-            // Tăng số lượng
-            car.setQuantity(car.getQuantity() + dto.getQuantity());
-            return carRepository.save(car);
-        } else {
-            // Tạo mới
-            Car car = carMapper.toEntity(dto);
-            car.setBrand(brand);
-            car.setImageUrl(imageUrl);
-            return carRepository.save(car);
-        }
-    }
 
 }

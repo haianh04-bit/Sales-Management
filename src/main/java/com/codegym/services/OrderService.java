@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -98,4 +99,7 @@ public class OrderService {
         return orderRepository.findAllWithUserAndItems();
     }
 
+    public Optional<Order> findById(Long id) {
+        return orderRepository.findById(id);
+    }
 }

@@ -4,11 +4,14 @@ import com.codegym.dto.ProfileDTO;
 import com.codegym.dto.UserDTO;
 import com.codegym.models.User;
 import com.codegym.repositories.UserRepository;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,12 +27,15 @@ public class UserService implements UserDetailsService {
 
     private static final String UPLOAD_DIR = "/Users/mac/Documents/Sales-Management/src/main/resources/uploads/user/"; // đường dẫn thư mục upload
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final FileUploadService fileUploadService;
+    private final MailService mailService;
 
-    @Autowired
-    private FileUploadService fileUploadService;
-
+    public UserService(UserRepository userRepository, FileUploadService fileUploadService, MailService mailService) {
+        this.userRepository = userRepository;
+        this.fileUploadService = fileUploadService;
+        this.mailService = mailService;
+    }
 
     // --- Dùng cho Spring Security ---
     @Override
@@ -85,7 +91,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-
     // Xoá tài khoản
     public void deleteAccount(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
@@ -111,4 +116,27 @@ public class UserService implements UserDetailsService {
                 keyword, keyword, keyword, pageable
         );
     }
+
+    public void deleteUser(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Nội dung email
+            String subject = "Thông báo xoá tài khoản";
+            String body = "Xin chào " + user.getUsername() + ",\n\n"
+                    + "Tài khoản của bạn đã bị xoá khỏi hệ thống. "
+                    + "Nếu có thắc mắc, vui lòng liên hệ bộ phận hỗ trợ.\n\n"
+                    + "Trân trọng!";
+
+            // Gửi email
+            mailService.sendMail(user.getEmail(), subject, body);
+
+            // Xoá user
+            userRepository.delete(user);
+        } else {
+            throw new RuntimeException("Không tìm thấy user với id = " + id);
+        }
+    }
+
 }

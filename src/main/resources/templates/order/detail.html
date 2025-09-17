@@ -7,8 +7,9 @@
 </head>
 <body>
 <section layout:fragment="content" class="container mt-4">
-  <h2>📝 Chi tiết đơn hàng #<span th:text="${order.id}"></span></h2>
-
+    <h2>📝 Chi tiết đơn hàng #
+        <span th:text="${stt != null ? stt : order.id}"></span>
+    </h2>
   <p><strong>Ngày đặt:</strong>
     <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
   <p><strong>Trạng thái:</strong>
