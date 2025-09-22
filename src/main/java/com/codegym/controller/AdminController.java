@@ -42,6 +42,7 @@ public class AdminController {
 
         model.addAttribute("userPage", userPage);
         model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userPage.getTotalPages());
 
         return "admin/user-list";
     }

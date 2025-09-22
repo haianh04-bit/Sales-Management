@@ -37,11 +37,6 @@
                             <i class="bi bi-people"></i> Quản lý User
                         </a>
                     </li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/dashboard}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
                 </ul>
 
                 <ul class="navbar-nav">
@@ -82,6 +77,11 @@
                             <li sec:authorize="hasRole('ADMIN')">
                                 <a class="dropdown-item" th:href="@{/admin/orders}">
                                     <i class="bi bi-cart-check"></i> Đơn hàng của người dùng
+                                </a>
+                            </li>
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/admin/dashboard}">
+                                    <i class="bi bi-speedometer2"></i> Trang tổng quan
                                 </a>
                             </li>
                             <li>

@@ -24,10 +24,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
             Pageable pageable
     );
 
-    Object findAll(Pageable pageable);
-
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = 'ROLE_USER'")
     Long countCustomers();
+
+    @Query("SELECT u FROM User u WHERE u.role = 'ROLE_USER'")
+    Page<User> findAllUsersExcludingAdmin(Pageable pageable);
+
 
 }
 

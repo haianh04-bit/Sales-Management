@@ -25,7 +25,7 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-    private static final String UPLOAD_DIR = "/Users/mac/Documents/Sales-Management/src/main/resources/uploads/user/"; // đường dẫn thư mục upload
+    private static final String UPLOAD_DIR = "D:/module4/case-study-module4/src/main/resources/uploads/users/"; // đường dẫn thư mục upload
 
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
@@ -103,10 +103,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // Danh sách user có phân trang
     public Page<User> getAllUsers(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return (Page<User>) userRepository.findAll(pageable);
+        return userRepository.findAllUsersExcludingAdmin(
+                PageRequest.of(page, size, Sort.by("id").descending())
+        );
     }
 
     // Tìm kiếm user có phân trang

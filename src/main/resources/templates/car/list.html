@@ -53,12 +53,6 @@
                 </select>
             </div>
 
-            <div class="col-md-2">
-                <label class="form-label">Model</label>
-                <input type="text" name="model" class="form-control"
-                       th:value="${modelSelected != null} ? ${modelSelected} : ''">
-            </div>
-
             <div class="col-md-1">
                 <label class="form-label">Năm</label>
                 <input type="number" name="year" class="form-control"
@@ -158,7 +152,7 @@
     <!-- USER xem danh sách -->
     <div sec:authorize="hasRole('USER')">
         <h2 class="mb-3">Danh sách xe</h2>
-        <div class="row row-cols-1 row-cols-md-4 g-3">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
             <div class="col" th:each="car : ${cars}">
                 <div class="card car-card h-100 shadow-sm border-0">
                     <a th:href="@{'/cars/view/' + ${car.id}}">
