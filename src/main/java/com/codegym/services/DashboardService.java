@@ -1,11 +1,14 @@
 package com.codegym.services;
 
 
+import com.codegym.models.Order;
 import com.codegym.repositories.CarRepository;
 import com.codegym.repositories.OrderRepository;
 import com.codegym.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +26,13 @@ public class DashboardService {
         return userRepository.countCustomers();
     }
 
-    public Long getTotalOrders() {
-        return orderRepository.countOrders();
+    public long getTotalOrders() {
+        return orderRepository.countByStatus("Đã xác nhận");
     }
-
-    public Long getTotalRevenue() {
-        return orderRepository.totalRevenue() != null ? orderRepository.totalRevenue() : 0L;
+    public double getTotalRevenue() {
+        List<Order> confirmedOrders = orderRepository.findByStatus("Đã xác nhận");
+        return confirmedOrders.stream()
+                .mapToDouble(Order::getTotalPrice)
+                .sum();
     }
 }

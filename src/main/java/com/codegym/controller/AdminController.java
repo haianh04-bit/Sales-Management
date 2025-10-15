@@ -86,6 +86,12 @@ public class AdminController {
         return "admin/order-list";
     }
 
+    @PostMapping("/{id}/confirm")
+    public String confirmOrder(@PathVariable Long id) {
+        orderService.updateOrderStatus(id, "Đã xác nhận");
+        return "redirect:/admin/orders";
+    }
+
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

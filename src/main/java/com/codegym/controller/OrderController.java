@@ -1,9 +1,7 @@
 package com.codegym.controller;
 
 import com.codegym.models.Order;
-import com.codegym.models.OrderItem;
 import com.codegym.models.User;
-import com.codegym.services.OrderItemService;
 import com.codegym.services.OrderService;
 import com.codegym.services.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -30,8 +28,19 @@ public class OrderController {
     @GetMapping("/history")
     public String history(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userService.findByEmail(userDetails.getUsername());
-        model.addAttribute("orders", orderService.findByUser(user));
-        return "order/list";
+        List<Order> orders = orderService.findByUser(user);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // Tính toán thuộc tính "cancelable" cho từng đơn
+        for (Order order : orders) {
+            boolean cancelable = "Đang chờ xác nhận".equals(order.getStatus())
+                    && order.getOrderDate().plusMinutes(10).isAfter(now);
+            order.setCancelable(cancelable);
+        }
+
+        model.addAttribute("orders", orders);
+        return "order/history";
     }
 
     @GetMapping("/{id}")
@@ -53,5 +62,13 @@ public class OrderController {
                                     @RequestParam String status) {
         orderService.updateOrderStatus(id, status);
         return "redirect:/orders/" + id;
+    }
+
+    @PostMapping("/cancel")
+    public String cancelOrder(@RequestParam Long orderId,
+                              @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        orderService.cancelOrder(orderId, user);
+        return "redirect:/orders/history";
     }
 }

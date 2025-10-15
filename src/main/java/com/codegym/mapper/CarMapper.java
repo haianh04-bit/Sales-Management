@@ -65,4 +65,6 @@ public class CarMapper {
         car.setTransmission(dto.getTransmission());
         car.setQuantity(dto.getQuantity());
     }
+
+
 }

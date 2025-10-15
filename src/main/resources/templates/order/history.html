@@ -9,11 +9,13 @@
         .order-card {
             border-radius: 12px;
             overflow: hidden;
+            border: 1px solid #dee2e6;
         }
 
         .order-header {
             background: linear-gradient(45deg, #0d6efd, #0dcaf0);
             color: white;
+            padding: 10px 15px;
         }
 
         .status-badge {
@@ -30,28 +32,46 @@
         .total-price {
             font-size: 1.1rem;
         }
+
+        .cancel-btn {
+            border-radius: 20px;
+        }
     </style>
 </head>
 <body>
 <section layout:fragment="content" class="container mt-4">
     <h2 class="mb-4"><i class="bi bi-bag-check-fill text-primary"></i> Lịch sử đơn hàng</h2>
 
+    <!-- Nếu không có đơn hàng -->
     <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info shadow-sm">
         <i class="bi bi-info-circle"></i> Bạn chưa có đơn hàng nào.
     </div>
 
-    <div th:each="order,stat : ${orders}" class="card order-card mb-4 shadow">
+    <!-- Danh sách đơn hàng -->
+    <div th:each="order, stat : ${orders}" class="card order-card mb-4 shadow-sm">
         <!-- Header -->
-        <div class="card-header order-header d-flex justify-content-between align-items-center">
+        <div class="order-header d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="mb-1">Mã đơn: <span class="fw-bold">#<span th:text="${stat.index + 1}"></span></span></h6>
+                <h6 class="mb-1">
+                    Mã đơn: <span class="fw-bold">#<span th:text="${order.id}"></span></span>
+                </h6>
                 <small><i class="bi bi-calendar3"></i>
                     <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
                 </small>
             </div>
-            <span class="status-badge bg-light text-dark fw-bold"
-                  th:text="${order.status}">
-            </span>
+            <div>
+                <span class="status-badge bg-light text-dark fw-bold me-2"
+                      th:text="${order.status}"></span>
+
+                <!-- Nút Hủy đơn -->
+                <form th:if="${order.cancelable}" th:action="@{/orders/cancel}" method="post" class="d-inline">
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm cancel-btn"
+                            onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                        <i class="bi bi-x-circle"></i> Hủy đơn
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Body -->
@@ -70,8 +90,8 @@
                     <tbody>
                     <tr th:each="item : ${order.items}">
                         <td>
-                            <a th:href="@{'/orders/' + ${order.id} + '?stt=' + ${stat.index + 1}}" class="text-decoration-none text-dark">
-                                <h5 class="card-title" th:text="${item.car.name}"></h5>
+                            <a th:href="@{'/orders/' + ${order.id}}" class="text-decoration-none text-dark">
+                                <h6 class="fw-semibold" th:text="${item.car.name}"></h6>
                             </a>
                         </td>
                         <td>
@@ -79,7 +99,7 @@
                                  alt="Car" class="car-img img-thumbnail">
                         </td>
                         <td class="text-center" th:text="${item.quantity}"></td>
-                        <td class="text-end"
+                        <td class="text-end text-secondary"
                             th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
                         <td class="text-end fw-bold text-danger"
                             th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>

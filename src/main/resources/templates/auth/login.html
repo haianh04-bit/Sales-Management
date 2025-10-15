@@ -1,76 +1,158 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Sport Shop</title>
+    <title>Login - Showroom Auto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background:
+                    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+                    url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=90') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: #fff;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .login-container {
+            margin-top: 120px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            color: #fff;
+        }
+
+        .card h2 {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #ff4b1f, #ff9068);
+            border: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.03);
+            background: linear-gradient(90deg, #ff9068, #ff4b1f);
+        }
+
+        a {
+            color: #ffd166;
+        }
+
+        a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .alert {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+        }
+    </style>
 </head>
-<body class="bg-light">
+
+<body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" style="background: linear-gradient(90deg, #0d6efd, #004085);">
     <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">
-            <i class="bi bi-car-front-fill"></i> Showroom Auto
+        <a class="navbar-brand fw-bold fs-4" th:href="@{/}">
+            <i class="bi bi-car-front-fill me-2"></i> Showroom Auto
         </a>
     </div>
 </nav>
 
-<!-- Login Form -->
-<div class="container d-flex justify-content-center align-items-center vh-100">
+<!-- Login Section -->
+<div class="container login-container d-flex justify-content-center align-items-center">
     <div class="col-md-5">
-        <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-body p-5">
-                <h2 class="text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Login</h2>
-                <!-- Thông báo lỗi -->
-                <div th:if="${param.error}" class="alert alert-danger text-center">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    Email hoặc mật khẩu không hợp lệ. Vui lòng thử lại.
-                </div>
-                <!-- Thông báo logout -->
-                <div th:if="${param.logout}" class="alert alert-info text-center">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Bạn đã đăng xuất thành công.
-                </div>
+        <div class="card p-5">
+            <h2 class="text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</h2>
 
-
-                <!-- Form login -->
-                <form th:action="@{/login}" method="post" th:object="${loginDTO}">
-
-                    <div th:if="${success}" class="alert alert-success">
-                        <span th:text="${success}"></span>
-                    </div>
-                    <div th:if="${error}" class="alert alert-danger">
-                        <span th:text="${error}"></span>
-                    </div>
-                    <div class="mb-3 input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                        <input type="text" th:field="*{email}" class="form-control" placeholder="Enter your email" required autofocus/>
-                    </div>
-                    <div class="mb-3 input-group">
-                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                        <input type="password" th:field="*{password}" class="form-control" placeholder="Enter your password" required/>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </button>
-                </form>
-                <hr>
-                <p class="mt-3 text-center">
-                    Don’t have an account?
-                    <a th:href="@{/register}" class="fw-bold">
-                        <i class="bi bi-person-plus-fill"></i> Register here
-                    </a>
-                </p>
-                <p class="text-center">
-                    <a th:href="@{/forgot-password}" class="fw-bold">
-                        <i class="bi bi-key-fill"></i> Forgot Password?
-                    </a>
-                </p>
+            <!-- Thông báo lỗi -->
+            <div th:if="${param.error}" class="alert alert-danger text-center">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Email hoặc mật khẩu không hợp lệ. Vui lòng thử lại.
             </div>
+
+            <!-- Thông báo logout -->
+            <div th:if="${param.logout}" class="alert alert-info text-center">
+                <i class="bi bi-box-arrow-right"></i> Bạn đã đăng xuất thành công.
+            </div>
+
+            <!-- Form login -->
+            <form th:action="@{/login}" method="post" th:object="${loginDTO}">
+                <div th:if="${success}" class="alert alert-success text-center">
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-danger text-center">
+                    <span th:text="${error}"></span>
+                </div>
+
+                <div class="mb-3 input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                    <input type="text" th:field="*{email}" class="form-control" placeholder="Nhập email của bạn" required autofocus/>
+                </div>
+
+                <div class="mb-3 input-group">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" th:field="*{password}" class="form-control" placeholder="Nhập mật khẩu" required/>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                </button>
+            </form>
+
+            <hr class="text-light">
+
+            <p class="mt-3 text-center">
+                Chưa có tài khoản?
+                <a th:href="@{/register}" class="fw-bold"><i class="bi bi-person-plus-fill"></i> Đăng ký ngay</a>
+            </p>
+
+            <p class="text-center mb-0">
+                <a th:href="@{/forgot-password}" class="fw-bold"><i class="bi bi-key-fill"></i> Quên mật khẩu?</a>
+            </p>
         </div>
     </div>
 </div>

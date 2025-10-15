@@ -3,43 +3,47 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <div th:fragment="header">
-    <!-- Navbar cố định -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+    <!-- 🌟 Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" style="background: linear-gradient(90deg, #0d6efd, #004085);">
         <div class="container">
-            <a class="navbar-brand fw-bold" th:href="@{/}">
-                <i class="bi bi-car-front-fill"></i> Showroom Auto
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold fs-4" th:href="@{/}">
+                <i class="bi bi-car-front-fill me-2"></i> Showroom Auto
             </a>
 
+            <!-- Nút toggle khi mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav">
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <!-- Menu -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/cars}">
+                        <a class="nav-link fw-semibold" th:href="@{/cars}">
                             <i class="bi bi-car-front"></i> Xe
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/brands}">
+                        <a class="nav-link fw-semibold" th:href="@{/brands}">
                             <i class="bi bi-building"></i> Hãng xe
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('USER')">
-                        <a class="nav-link" th:href="@{/orders/history}">
+                        <a class="nav-link fw-semibold" th:href="@{/orders/history}">
                             <i class="bi bi-receipt"></i> Đơn hàng
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/users}">
+                        <a class="nav-link fw-semibold" th:href="@{/admin/users}">
                             <i class="bi bi-people"></i> Quản lý User
                         </a>
                     </li>
                 </ul>
 
-                <ul class="navbar-nav">
+                <!-- Phần tài khoản -->
+                <ul class="navbar-nav ms-auto align-items-center">
                     <!-- Khi chưa đăng nhập -->
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link" th:href="@{/login}">
@@ -47,31 +51,31 @@
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" th:href="@{/register}">
+                        <a class="btn btn-outline-light ms-2 px-3" th:href="@{/register}">
                             <i class="bi bi-person-plus"></i> Đăng ký
                         </a>
                     </li>
 
                     <!-- Khi đã đăng nhập -->
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                           data-bs-toggle="dropdown" th:text="${#authentication.name}">
-                            <i class="bi bi-person-circle"></i> User
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <span th:text="${#authentication.name}">User</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                             <li sec:authorize="hasRole('USER')">
                                 <a class="dropdown-item" th:href="@{/user/profile}">
-                                    <i class="bi bi-person-badge"></i> Hồ sơ
+                                    <i class="bi bi-person-badge"></i> Hồ sơ cá nhân
                                 </a>
                             </li>
                             <li sec:authorize="hasRole('USER')">
                                 <a class="dropdown-item" th:href="@{/change-password}">
-                                    <i class="bi bi-person-badge"></i> Đổi mật khẩu
+                                    <i class="bi bi-key"></i> Đổi mật khẩu
                                 </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li sec:authorize="hasRole('ADMIN')">
-                                <a class="dropdown-item" th:href="@{/admin/carts}">
-                                    <i class="bi bi-cart-check"></i> Giỏ hàng của người dùng
+                                <a class="dropdown-item" th:href="@{/admin/dashboard}">
+                                    <i class="bi bi-speedometer2"></i> Trang quản trị
                                 </a>
                             </li>
                             <li sec:authorize="hasRole('ADMIN')">
@@ -80,13 +84,14 @@
                                 </a>
                             </li>
                             <li sec:authorize="hasRole('ADMIN')">
-                                <a class="dropdown-item" th:href="@{/admin/dashboard}">
-                                    <i class="bi bi-speedometer2"></i> Trang tổng quan
+                                <a class="dropdown-item" th:href="@{/admin/carts}">
+                                    <i class="bi bi-cart-check"></i> Giỏ hàng của người dùng
                                 </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form th:action="@{/logout}" method="post">
-                                    <button type="submit" class="dropdown-item">
+                                    <button type="submit" class="dropdown-item text-danger">
                                         <i class="bi bi-box-arrow-right"></i> Đăng xuất
                                     </button>
                                 </form>
@@ -98,80 +103,115 @@
         </div>
     </nav>
 
-    <!-- Khoảng cách để navbar không che nội dung -->
+    <!-- Giữ khoảng cách cho nội dung -->
     <div style="padding-top: 70px;"></div>
 
-    <!-- Nút giỏ hàng nổi -->
-    <div class="floating-cart" sec:authorize="hasRole('USER')">
-        <a th:href="@{/cart}" class="btn btn-success">
-            <i class="bi bi-cart4"></i> Giỏ hàng
+    <div sec:authorize="hasRole('USER')" class="floating-btn cart-btn">
+        <a th:href="@{/cart}" class="btn-circle cart">
+            <i class="bi bi-cart4"></i>
+            <span class="cart-count" th:text="${cartCount}">0</span>
         </a>
     </div>
 
-    <!-- Toast thông báo -->
+    <!-- 💬 Nút chat nổi - User -->
+    <div sec:authorize="hasRole('USER')" class="floating-btn chat-btn user-chat">
+        <a th:href="@{/user/chat/inbox}" class="btn-circle chat-user">
+            <i class="bi bi-chat-dots"></i>
+        </a>
+    </div>
+
+    <!-- 💬 Nút chat nổi - Admin -->
+    <div sec:authorize="hasRole('ADMIN')" class="floating-btn chat-btn admin-chat">
+        <a th:href="@{/admin/chat/inbox}" class="btn-circle chat-admin">
+            <i class="bi bi-chat-dots"></i>
+        </a>
+    </div>
+
+    <!-- 🔔 Toast thông báo -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
-        <!-- Success Message -->
-        <div th:if="${successMessage}"
-             class="toast align-items-center text-bg-success border-0 show"
-             role="alert" aria-live="assertive" aria-atomic="true">
+        <div th:if="${successMessage}" class="toast align-items-center text-bg-success border-0 show shadow" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-check-circle"></i>
-                    <span th:text="${successMessage}"></span>
+                    <i class="bi bi-check-circle me-2"></i><span th:text="${successMessage}"></span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
 
-        <!-- Error Message -->
-        <div th:if="${error}"
-             class="toast align-items-center text-bg-danger border-0 show"
-             role="alert" aria-live="assertive" aria-atomic="true">
+        <div th:if="${error}" class="toast align-items-center text-bg-danger border-0 show shadow" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <span th:text="${error}"></span>
+                    <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${error}"></span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
 
-
+    <!-- CSS phụ -->
     <style>
-        /* Nút giỏ hàng nổi */
-        .floating-cart {
+        .navbar-nav .nav-link {
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffdd57 !important;
+            transform: translateY(-1px);
+        }
+
+        /* 🧩 Cấu trúc chung cho nút nổi */
+        .floating-btn {
             position: fixed;
-            top: 60px; /* cách navbar 30px */
-            right: 20px;
             z-index: 1050;
         }
 
-        .floating-cart .btn {
-            display: flex;
-            align-items: center;
+        /* Vị trí giỏ hàng ở góc phải trên */
+        .cart-btn {
+            top: 90px;
+            right: 25px;
         }
 
-        .floating-chat {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 2000; /* cao hơn giỏ hàng và navbar */
+        /* Vị trí chat ở góc phải dưới */
+        .chat-btn {
+            bottom: 25px;
+            right: 25px;
+        }
+
+        /* Nút tròn chung */
+        .btn-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        /* 🎨 Màu riêng từng loại */
+        .cart {
+            background: linear-gradient(135deg, #198754, #28a745);
+        }
+
+        .chat-user {
+            background: linear-gradient(135deg, #0d6efd, #39a0ff);
+        }
+
+        .chat-admin {
+            background: linear-gradient(135deg, #ffc107, #ffce3a);
+            color: #212529 !important;
+        }
+
+        /* 🌟 Hiệu ứng hover */
+        .btn-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
     </style>
-    <div class="floating-chat" sec:authorize="hasRole('USER')">
-        <a th:href="@{user/chat/inbox}" class="btn btn-primary" id="chat-user">
-            <i class="bi bi-chat-dots"></i> Chat
-        </a>
-    </div>
-    <div class="floating-chat" sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/admin/chat/inbox}" class="btn btn-primary" id="chat-admin">
-            <i class="bi bi-chat-dots"></i> Chat
-        </a>
-    </div>
 
 </div>
 </body>

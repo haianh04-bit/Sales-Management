@@ -37,7 +37,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("NEW");
+        order.setStatus("Đang chờ xác nhận");
 
         List<OrderItem> orderItems = new ArrayList<>();
         double total = 0;
@@ -106,4 +106,31 @@ public class OrderService {
     public long countOrdersByUser(Long userId) {
         return orderRepository.countByUserId(userId);
     }
+
+    public void cancelOrder(Long orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        // Kiểm tra quyền hủy: chỉ chủ đơn mới được hủy
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bạn không có quyền hủy đơn hàng này");
+        }
+
+        // Không cho hủy nếu đã xác nhận hoặc đang giao
+        if (!order.getStatus().equals("Đang chờ xác nhận")) {
+            throw new RuntimeException("Đơn hàng đã được xác nhận, không thể hủy");
+        }
+
+        // Nếu cho phép hủy
+        order.setStatus("Đã hủy");
+        order.setCancelTime(LocalDateTime.now());
+
+        order.getItems().forEach(item -> {
+            var car = item.getCar();
+            car.setQuantity(car.getQuantity() + item.getQuantity());
+        });
+
+        orderRepository.save(order);
+    }
+
 }

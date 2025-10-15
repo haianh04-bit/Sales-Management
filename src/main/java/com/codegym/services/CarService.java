@@ -6,6 +6,7 @@ import com.codegym.models.Brand;
 import com.codegym.models.Car;
 import com.codegym.repositories.BrandRepository;
 import com.codegym.repositories.CarRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,11 +57,11 @@ public class CarService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy xe với id: " + id));
     }
 
-    public List<Car> getCarsWithPagination(int offset, int limit) {
-        int page = offset / limit;
-        Pageable pageable = PageRequest.of(page, limit);
-        return carRepository.findAll(pageable).getContent();
+    public Page<Car> getCarsWithPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return carRepository.findAll(pageable);
     }
+
 
     public long countCars() {
         return carRepository.count();

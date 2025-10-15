@@ -10,6 +10,7 @@ import com.codegym.services.CarService;
 import com.codegym.services.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,11 +31,15 @@ public class CarController {
     private final ReviewService reviewService;
     // Hiển thị danh sách xe
     @GetMapping
-    public String listCars(Model model) {
-        List<Car> cars = carService.findAll();
+    public String listCars(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            Model model) {
 
-        List<CarDTO> carDTOs = cars.stream().map(car -> {
-            double avg = reviewService.getAverageRatingByCar(car.getId()); // lấy rating trung bình
+        Page<Car> carPage = carService.getCarsWithPagination(page, size);
+
+        List<CarDTO> carDTOs = carPage.getContent().stream().map(car -> {
+            double avg = reviewService.getAverageRatingByCar(car.getId());
             int fullStars = (int) avg;
             boolean halfStar = (avg - fullStars) >= 0.5;
             int emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
@@ -55,6 +60,10 @@ public class CarController {
 
         model.addAttribute("cars", carDTOs);
         model.addAttribute("brands", brandService.findAll());
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", carPage.getTotalPages());
+        model.addAttribute("pageSize", size);
 
         return "car/list";
     }

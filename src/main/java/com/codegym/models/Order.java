@@ -29,9 +29,16 @@ public class Order {
 
     private double totalPrice;
 
-    private String status; // NEW, PAID, SHIPPED, CANCELLED
+    @Transient
+    private boolean cancelable;
+
+    private LocalDateTime cancelTime;
+
+
+    private String status = "Đang chờ xác nhận";
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
+
 }
 

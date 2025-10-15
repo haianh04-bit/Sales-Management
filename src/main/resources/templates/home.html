@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layout/layout}">
 <head>
-    <title>Trang chủ - Showroom Auto</title>
+    <meta charset="UTF-8">
+    <title>Showroom Auto - Trang chủ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
+
     <style>
+        /* --- HERO SECTION --- */
         .hero {
             position: relative;
-            width: 100%;
-            height: 500px;
+            height: 550px;
             overflow: hidden;
-            color: white;
-            text-align: center;
         }
         .hero-slide {
             position: absolute;
@@ -20,26 +22,30 @@
             height: 100%;
             background-size: cover;
             background-position: center;
-            top: 0;
-            left: 0;
+            transition: opacity 1.5s ease-in-out, transform 3s ease-in-out;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            transform: scale(1.1);
         }
         .hero-slide.active {
             opacity: 1;
+            transform: scale(1);
         }
         .hero::after {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
             z-index: 1;
         }
         .hero-content {
-            position: relative;
-            z-index: 2;
+            position: absolute;
             top: 50%;
-            transform: translateY(-50%);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            color: #fff;
+            text-align: center;
+            width: 90%;
         }
         .hero-content h1 {
             font-size: 3rem;
@@ -47,16 +53,18 @@
             text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
         }
         .hero-content p {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-top: 15px;
         }
+
+        /* --- INDICATORS --- */
         .hero-indicators {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: 10px;
             z-index: 3;
         }
         .hero-indicators span {
@@ -71,6 +79,7 @@
             opacity: 1;
             background: #0d6efd;
         }
+
         .hero-control {
             position: absolute;
             top: 50%;
@@ -80,23 +89,53 @@
             background: rgba(0,0,0,0.4);
             border: none;
             cursor: pointer;
-            padding: 10px 15px;
+            padding: 8px 14px;
             border-radius: 50%;
             z-index: 3;
         }
-        .hero-control:hover {
-            background: rgba(0,0,0,0.7);
-        }
         .hero-control.left { left: 20px; }
         .hero-control.right { right: 20px; }
+        .hero-control:hover { background: rgba(0,0,0,0.7); }
+
+        /* --- PRODUCT CARD --- */
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        /* --- ABOUT & CTA --- */
+        .about-section {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+        .cta-section {
+            background: linear-gradient(135deg, #007bff, #00c6ff);
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+        }
+        .cta-section h3 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        .cta-section .btn {
+            font-size: 1.2rem;
+            border-radius: 50px;
+            margin-top: 15px;
+        }
     </style>
 </head>
+
 <body>
 <section layout:fragment="content">
 
-    <!-- Hero Slideshow -->
-    <div class="hero mb-5">
-        <!-- Thêm bao nhiêu ảnh tùy thích -->
+    <!-- HERO SECTION -->
+    <div class="hero">
         <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1502877338535-766e1452684a');"></div>
         <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70');"></div>
         <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1503736334956-4c8f8e92946d');"></div>
@@ -104,45 +143,62 @@
         <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7');"></div>
         <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1493238792000-8113da705763');"></div>
 
-        <!-- Nội dung -->
         <div class="hero-content">
             <h1><i class="bi bi-car-front-fill"></i> Showroom Auto</h1>
-            <p>Khám phá những mẫu xe mới nhất với giá ưu đãi đặc biệt 🚗✨</p>
+            <p>Khám phá những mẫu xe sang trọng, mạnh mẽ và hiện đại nhất hôm nay!</p>
         </div>
 
-        <!-- Chấm tròn chỉ số (JS sẽ tự tạo theo số ảnh) -->
         <div class="hero-indicators"></div>
-
-        <!-- Nút điều khiển -->
         <button class="hero-control left"><i class="bi bi-chevron-left"></i></button>
         <button class="hero-control right"><i class="bi bi-chevron-right"></i></button>
     </div>
 
+    <!-- ABOUT -->
+    <div class="about-section text-center">
+        <div class="container" data-aos="fade-up">
+            <h2 class="fw-bold mb-3"><i class="bi bi-gear-wide-connected"></i> Về Chúng Tôi</h2>
+            <p class="lead text-muted mb-4">
+                Showroom Auto tự hào mang đến cho bạn trải nghiệm mua xe trực tuyến tiện lợi, hiện đại và đáng tin cậy.
+            </p>
+            <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-car-front fs-1 text-primary"></i>
+                    <h5 class="mt-2">Hơn 500+ mẫu xe</h5>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-people fs-1 text-success"></i>
+                    <h5 class="mt-2">Hàng nghìn khách hàng tin tưởng</h5>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-shield-check fs-1 text-warning"></i>
+                    <h5 class="mt-2">Uy tín & Bảo hành toàn quốc</h5>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Sản phẩm mới -->
-    <div class="container">
-        <h2 class="mb-4"><i class="bi bi-stars"></i> Sản phẩm mới nhất</h2>
-
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- SẢN PHẨM MỚI -->
+    <div class="container py-5">
+        <h2 class="mb-4 text-center fw-bold" data-aos="fade-up">
+            <i class="bi bi-stars"></i> Sản phẩm mới nhất
+        </h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4" data-aos="fade-up">
             <div class="col" th:each="car : ${newCars}">
-                <div class="card h-100 shadow-sm border-0">
+                <div class="card h-100 border-0 shadow-sm">
                     <a th:href="@{'/cars/view/' + ${car.id}}">
-                        <img th:if="${car.imageUrl}"
-                             th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
-                             class="card-img-top"
-                             style="height: 200px; object-fit: cover;"
-                             alt="Car image">
+                        <img th:src="@{/resources/uploads/cars/{url}(url=${car.imageUrl})}"
+                             class="card-img-top" alt="Car image"
+                             style="height: 200px; object-fit: cover;">
                     </a>
                     <div class="card-body">
-                        <a th:href="@{'/cars/view/' + ${car.id}}">
-                            <h5 class="card-title" th:text="${car.name}"></h5>
-                        </a>
-                        <p class="card-text text-muted mb-1">
+                        <h5 class="card-title" th:text="${car.name}"></h5>
+                        <p class="text-muted">
                             <i class="bi bi-cash"></i>
                             <span th:text="${#numbers.formatDecimal(car.price,0,'COMMA',0,'POINT')}"></span> VND
                         </p>
-                        <p class="mb-1">
-                            <i class="bi bi-box-seam"></i> Số lượng: <span th:text="${car.quantity}"></span>
+                        <p>
+                            <i class="bi bi-box-seam"></i> Còn lại:
+                            <span th:text="${car.quantity}"></span>
                         </p>
                         <p th:if="${car.averageRating > 0}">
                             <span th:each="i : ${#numbers.sequence(1, car.fullStars)}">
@@ -186,23 +242,22 @@
                 </div>
             </div>
         </div>
-
         <div class="text-center mt-4">
-            <a href="/cars" class="btn btn-lg btn-outline-primary">
+            <a href="/cars" class="btn btn-lg btn-primary rounded-pill px-5">
                 <i class="bi bi-car-front"></i> Xem tất cả xe
             </a>
         </div>
     </div>
 
-    <!-- Alert đổi mật khẩu -->
-    <div th:if="${param.passwordChanged}"
-         class="alert alert-success alert-dismissible fade show"
-         role="alert"
-         style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; min-width: 250px;">
-        Mật khẩu đã được thay đổi thành công!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- CTA -->
+    <div class="cta-section" data-aos="fade-up" sec:authorize="!isAuthenticated()">
+        <h3>Trở thành khách hàng thân thiết của Showroom Auto ngay hôm nay!</h3>
+        <a href="/register" class="btn btn-light btn-lg">
+            <i class="bi bi-person-plus"></i> Đăng ký ngay
+        </a>
     </div>
 
+    <!-- SLIDER SCRIPT -->
     <script>
         const slides = document.querySelectorAll('.hero-slide');
         const indicatorContainer = document.querySelector('.hero-indicators');
@@ -211,7 +266,6 @@
         let index = 0;
         let slideInterval;
 
-        // Tạo chấm chỉ số theo số lượng ảnh
         slides.forEach((_, i) => {
             const dot = document.createElement('span');
             if (i === 0) dot.classList.add('active');
@@ -220,8 +274,8 @@
         const indicators = indicatorContainer.querySelectorAll('span');
 
         function showSlide(n) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
+            slides.forEach((s, i) => {
+                s.classList.remove('active');
                 indicators[i].classList.remove('active');
             });
             slides[n].classList.add('active');
@@ -233,40 +287,24 @@
             index = (index + 1) % slides.length;
             showSlide(index);
         }
-
         function prevSlide() {
             index = (index - 1 + slides.length) % slides.length;
             showSlide(index);
         }
 
-        function startAutoSlide() {
-            slideInterval = setInterval(nextSlide, 4000);
-        }
-        function stopAutoSlide() {
-            clearInterval(slideInterval);
-        }
+        function startAutoSlide() { slideInterval = setInterval(nextSlide, 4000); }
+        function stopAutoSlide() { clearInterval(slideInterval); }
 
         startAutoSlide();
-
-        nextBtn.addEventListener('click', () => {
-            stopAutoSlide();
-            nextSlide();
-            startAutoSlide();
-        });
-        prevBtn.addEventListener('click', () => {
-            stopAutoSlide();
-            prevSlide();
-            startAutoSlide();
-        });
-
+        nextBtn.onclick = () => { stopAutoSlide(); nextSlide(); startAutoSlide(); };
+        prevBtn.onclick = () => { stopAutoSlide(); prevSlide(); startAutoSlide(); };
         indicators.forEach((dot, i) => {
-            dot.addEventListener('click', () => {
-                stopAutoSlide();
-                showSlide(i);
-                startAutoSlide();
-            });
+            dot.onclick = () => { stopAutoSlide(); showSlide(i); startAutoSlide(); };
         });
     </script>
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
 
 </section>
 </body>

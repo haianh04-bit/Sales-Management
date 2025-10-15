@@ -52,7 +52,7 @@ public class SecurityConfig {
                         // Chat user
                         .requestMatchers("/user/chat/**").authenticated()
 
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/brands/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**", "/order/**", "/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
