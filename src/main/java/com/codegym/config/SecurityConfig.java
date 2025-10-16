@@ -45,7 +45,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/login", "/register",
                                 "/verify-otp", "/forgot-password", "/reset-password",
-                                "/resources/**").permitAll()
+                                "/resources/**","/cars","/cars/search").permitAll()
                         // Chat admin
                         .requestMatchers("/admin/chat/**").authenticated()
 

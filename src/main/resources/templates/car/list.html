@@ -48,7 +48,7 @@
                     <option th:each="brand : ${brands}"
                             th:value="${brand.name}"
                             th:text="${brand.name}"
-                            th:selected="${brand.name != null} ? ${brand.name.equals(brandSelected)} : false">
+                            th:selected="${brand.name == brandSelected}">
                     </option>
                 </select>
             </div>
@@ -64,8 +64,8 @@
                 <label class="form-label">Tình trạng</label>
                 <select name="condition" class="form-select">
                     <option value="">-- Tất cả --</option>
-                    <option value="mới" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('mới')} : false">Mới</option>
-                    <option value="cũ" th:selected="${conditionSelected != null} ? ${conditionSelected.equals('cũ')} : false">Cũ</option>
+                    <option value="mới" th:selected="${conditionSelected == 'mới'}">Mới</option>
+                    <option value="cũ" th:selected="${conditionSelected == 'cũ'}">Cũ</option>
                 </select>
             </div>
 
@@ -73,8 +73,8 @@
                 <label class="form-label">Hộp số</label>
                 <select name="transmission" class="form-select">
                     <option value="">-- Tất cả --</option>
-                    <option value="Tự động" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Tự động')} : false">Tự động</option>
-                    <option value="Số sàn" th:selected="${transmissionSelected != null} ? ${transmissionSelected.equals('Số sàn')} : false">Số sàn</option>
+                    <option value="Tự động" th:selected="${transmissionSelected == 'Tự động'}">Tự động</option>
+                    <option value="Số sàn" th:selected="${transmissionSelected == 'Số sàn'}">Số sàn</option>
                 </select>
             </div>
 
@@ -149,9 +149,10 @@
         </div>
     </div>
 
-    <!-- USER xem danh sách -->
-    <div sec:authorize="hasRole('USER')">
-        <h2 class="mb-3">Danh sách xe</h2>
+    <div sec:authorize="!hasRole('ADMIN')">
+
+        <h2 class="mb-3 text-center">Danh sách xe</h2>
+
         <div class="row row-cols-1 row-cols-md-3 g-3">
             <div class="col" th:each="car : ${cars}">
                 <div class="card car-card h-100 shadow-sm border-0">
@@ -162,6 +163,7 @@
                              style="height: 200px; object-fit: cover;"
                              alt="Car image">
                     </a>
+
                     <div class="card-body">
                         <h5 class="card-title">
                             <a th:href="@{'/cars/view/' + ${car.id}}" class="text-decoration-none text-dark"
@@ -178,6 +180,8 @@
                         <p class="mb-1">
                             <i class="bi bi-box-seam"></i> SL: <span th:text="${car.quantity}"></span>
                         </p>
+
+                        <!-- ⭐ Hiển thị đánh giá -->
                         <p th:if="${car.averageRating > 0}">
                             <span th:each="i : ${#numbers.sequence(1, car.fullStars)}">
                                 <i class="bi bi-star-fill text-warning"></i>
@@ -199,45 +203,67 @@
                             (Chưa có đánh giá)
                         </p>
                     </div>
-                    <div class="card-footer d-flex justify-content-between bg-white" sec:authorize="hasRole('USER')">
-                        <form th:action="@{/cart/add}" method="post" style="display:inline;">
-                            <input type="hidden" name="carId" th:value="${car.id}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-sm btn-primary"
-                                    th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                            </button>
-                        </form>
-                        <form th:action="@{/cart/buy}" method="post" style="display:inline;">
-                            <input type="hidden" name="carId" th:value="${car.id}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-success btn-sm"
-                                    th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cash"></i> Mua ngay
-                            </button>
-                        </form>
+
+                    <!-- 🛒 Nút thao tác -->
+                    <div class="card-footer d-flex justify-content-between bg-white">
+
+                        <!-- Nếu chưa đăng nhập -->
+                        <div sec:authorize="isAnonymous()" class="w-100 text-center">
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
+                            </a>
+                        </div>
+
+                        <!-- Nếu USER đăng nhập -->
+                        <div sec:authorize="hasRole('USER')" class="d-flex justify-content-between w-100">
+                            <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                                <input type="hidden" name="carId" th:value="${car.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-sm btn-primary"
+                                        th:disabled="${car.quantity == 0}">
+                                    <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
+                                </button>
+                            </form>
+                            <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                                <input type="hidden" name="carId" th:value="${car.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-success btn-sm"
+                                        th:disabled="${car.quantity == 0}">
+                                    <i class="bi bi-cash"></i> Mua ngay
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div>
-        <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation example" th:if="${totalPages != null and totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                    <a class="page-link" th:href="@{/cars(page=${currentPage - 1}, size=${pageSize})}" tabindex="-1">Trang
-                        trước</a>
-                </li>
 
+                <!-- Nút Trang trước -->
                 <li class="page-item"
-                    th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-                    th:classappend="${pageNum == currentPage} ? 'active'">
-                    <a class="page-link" th:href="@{/cars(page=${pageNum}, size=${pageSize})}"
+                    th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/cars(page=${(currentPage != null and currentPage > 0) ? currentPage - 1 : 0}, size=${pageSize})}"
+                       tabindex="-1">Trang trước</a>
+                </li>
+                <!-- Danh sách số trang -->
+                <li class="page-item"
+                    th:each="pageNum : ${#numbers.sequence(0, (totalPages != null and totalPages > 0) ? totalPages - 1 : 0)}"
+                    th:classappend="${currentPage != null and pageNum == currentPage} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/cars(page=${pageNum}, size=${pageSize})}"
                        th:text="${pageNum + 1}">1</a>
                 </li>
-
-                <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{/cars(page=${currentPage + 1}, size=${pageSize})}">Trang sau</a>
+                <!-- Nút Trang sau -->
+                <li class="page-item"
+                    th:classappend="${currentPage != null and totalPages != null and currentPage + 1 >= totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/cars(page=${(currentPage != null and totalPages != null and currentPage + 1 < totalPages) ? currentPage + 1 : currentPage}, size=${pageSize})}">
+                        Trang sau
+                    </a>
                 </li>
             </ul>
         </nav>

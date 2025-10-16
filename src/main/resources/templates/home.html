@@ -221,23 +221,35 @@
                             (Chưa có đánh giá)
                         </p>
                     </div>
-                    <div class="card-footer d-flex justify-content-between bg-white" sec:authorize="hasRole('USER')">
-                        <form th:action="@{/cart/add}" method="post" style="display:inline;">
-                            <input type="hidden" name="carId" th:value="${car.id}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-sm btn-primary"
-                                    th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
-                            </button>
-                        </form>
-                        <form th:action="@{/cart/buy}" method="post" style="display:inline;">
-                            <input type="hidden" name="carId" th:value="${car.id}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-success btn-sm"
-                                    th:disabled="${car.quantity == 0}">
-                                <i class="bi bi-cash"></i> Mua ngay
-                            </button>
-                        </form>
+                    <!-- 🛒 Nút thao tác -->
+                    <div class="card-footer d-flex justify-content-between bg-white">
+
+                        <!-- Nếu chưa đăng nhập -->
+                        <div sec:authorize="isAnonymous()" class="w-100 text-center">
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
+                            </a>
+                        </div>
+
+                        <!-- Nếu USER đăng nhập -->
+                        <div sec:authorize="hasRole('USER')" class="d-flex justify-content-between w-100">
+                            <form th:action="@{/cart/add}" method="post" style="display:inline;">
+                                <input type="hidden" name="carId" th:value="${car.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-sm btn-primary"
+                                        th:disabled="${car.quantity == 0}">
+                                    <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
+                                </button>
+                            </form>
+                            <form th:action="@{/cart/buy}" method="post" style="display:inline;">
+                                <input type="hidden" name="carId" th:value="${car.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-success btn-sm"
+                                        th:disabled="${car.quantity == 0}">
+                                    <i class="bi bi-cash"></i> Mua ngay
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

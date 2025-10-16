@@ -92,11 +92,11 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
-    @PostMapping("/delete/{id}")
+    @GetMapping("user/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             userService.deleteUser(id);
-            redirectAttributes.addFlashAttribute("success", "Xoá user thành công và đã gửi thông báo đến email!");
+            redirectAttributes.addFlashAttribute("successMessage", "Xoá user thành công và đã gửi thông báo đến email!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -88,16 +90,17 @@ public class UserController {
     }
 
 
-    // Xoá tài khoản cá nhân
     @GetMapping("/delete")
-    public String deleteAccount(Authentication authentication, HttpSession session) {
+    public String deleteAccount(Authentication authentication, HttpSession session, RedirectAttributes redirectAttributes) {
         String email = authentication.getName();
         User user = userService.findByEmail(email);
         if (user == null) return "redirect:/login";
 
         userService.deleteAccount(user.getId());
         session.invalidate(); // đăng xuất sau khi xoá
-        return "redirect:/login?accountDeleted";
+
+        redirectAttributes.addFlashAttribute("success", "Xoá tài khoản thành công!");
+        return "redirect:/login";
     }
 
     // Xem profile người khác (nếu cần)

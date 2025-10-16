@@ -6,6 +6,8 @@ import com.codegym.models.Order;
 import com.codegym.services.CartService;
 import com.codegym.services.OrderService;
 import com.codegym.services.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -46,22 +48,44 @@ public class CartController {
                             @AuthenticationPrincipal UserDetails userDetails,
                             @RequestHeader(value = "Referer", required = false) String referer,
                             RedirectAttributes redirectAttributes) {
-        User user = userService.findByEmail(userDetails.getUsername());
-        cartService.addToCart(user, carId, quantity);
-        redirectAttributes.addFlashAttribute("successMessage", "Đã thêm xe vào giỏ hàng!");
+        try {
+            User user = userService.findByEmail(userDetails.getUsername());
+            cartService.addToCart(user, carId, quantity);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm xe vào giỏ hàng!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         if (referer != null) return "redirect:" + referer;
         return "redirect:/cars";
     }
 
-    // Mua ngay → thêm vào giỏ rồi chuyển sang trang giỏ hàng
     @PostMapping("/buy")
     public String buyNow(@RequestParam Long carId,
                          @RequestParam int quantity,
-                         @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userService.findByEmail(userDetails.getUsername());
-        cartService.addToCart(user, carId, quantity);
-        return "redirect:/cart";
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         RedirectAttributes redirectAttributes) {
+
+        // ⚠️ Nếu chưa đăng nhập → chuyển hướng đến trang login, kèm redirect trở lại
+        if (userDetails == null) {
+            return "redirect:/login?redirect=/cars";
+        }
+
+        try {
+            User user = userService.findByEmail(userDetails.getUsername());
+            cartService.addToCart(user, carId, quantity);
+
+            // ✅ Sau khi thêm thành công → chuyển sang trang giỏ hàng
+            redirectAttributes.addFlashAttribute("successMessage", "Xe đã được thêm vào giỏ hàng!");
+            return "redirect:/cart";
+
+        } catch (RuntimeException e) {
+            // ❌ Nếu lỗi (vd hết hàng) → quay lại trang trước và báo lỗi
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/cars";
+        }
     }
+
 
     // Xóa sản phẩm khỏi giỏ
     @PostMapping("/remove")

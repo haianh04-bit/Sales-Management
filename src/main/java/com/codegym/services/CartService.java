@@ -22,27 +22,37 @@ public class CartService {
     // Thêm xe vào giỏ hàng, chỉ lưu CartItem, không trừ kho
     public void addToCart(User user, Long carId, int quantity) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy xe"));
 
-        if (car.getQuantity() < quantity) {
-            throw new RuntimeException("Không đủ xe trong kho");
+        if (car.getQuantity() <= 0) {
+            throw new RuntimeException("Xe đã hết hàng");
         }
 
-        CartItem cartItem = cartItemRepository.findByUserId(user.getId()).stream()
-                .filter(item -> item.getCar().getId().equals(carId))
-                .findFirst()
-                .orElse(new CartItem());
+        // Tìm sản phẩm đã có trong giỏ hàng của user
+        CartItem cartItem = cartItemRepository.findByUserAndCar(user, car).orElse(null);
 
-        if (cartItem.getId() == null) {
+        int totalQuantity = quantity;
+        if (cartItem != null) {
+            totalQuantity += cartItem.getQuantity();
+        }
+
+        // Kiểm tra vượt quá tồn kho
+        if (totalQuantity > car.getQuantity()) {
+            throw new RuntimeException("Số lượng vượt quá số xe còn trong kho!");
+        }
+
+        if (cartItem == null) {
+            cartItem = new CartItem();
             cartItem.setUser(user);
             cartItem.setCar(car);
             cartItem.setQuantity(quantity);
         } else {
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItem.setQuantity(totalQuantity);
         }
 
         cartItemRepository.save(cartItem);
     }
+
 
     public List<CartItem> getCart(User user) {
         return cartItemRepository.findByUserId(user.getId());
